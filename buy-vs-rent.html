@@ -997,18 +997,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border: 1px solid var(--border);
   white-space: nowrap;
 }
-.verdict-sensitivity {
-  margin-top: 6px;
-  display: inline-block;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 3.5px 9px;
-  line-height: 1.4;
-}
 
 /* ── STICKY MOBILE VERDICT BAR ── */
 .mobile-sticky-verdict {
@@ -2301,7 +2289,6 @@ canvas { max-height: 270px; }
         <div class="v-text">
           <strong id="verdictTitle">Calculating…</strong>
           <small id="verdictSub"></small>
-          <div class="verdict-sensitivity" id="verdictSensitivity"></div>
         </div>
       </div>
       <div class="verdict-pill" id="verdictModeBadge">💵 Shown in Today's Dollars</div>
@@ -3654,69 +3641,6 @@ function runSimulation(enableTaxes, overrides) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SENSITIVITY SOLVER ("WHAT FLIPS THE VERDICT")
-// ═══════════════════════════════════════════════════════════════
-function computeFlipSensitivity(taxOn, baseNwDiff) {
-  const evalDiff = (ovr) => {
-    const res = runSimulation(taxOn, ovr).lastYearState;
-    return res.buyNW_nom - res.rentNW_nom;
-  };
-
-  // 1. Solve for break-even appreciation rate (% between -2.0% and 12.0%)
-  let appFlip = null;
-  let loA = -2.0, hiA = 12.0;
-  const dLoA = evalDiff({ appreciation: loA });
-  const dHiA = evalDiff({ appreciation: hiA });
-  if ((dLoA <= 0 && dHiA >= 0) || (dLoA >= 0 && dHiA <= 0)) {
-    for (let i = 0; i < 14; i++) {
-      const mid = (loA + hiA) / 2;
-      const dMid = evalDiff({ appreciation: mid });
-      if ((dMid >= 0) === (dHiA >= 0)) hiA = mid;
-      else loA = mid;
-    }
-    appFlip = (loA + hiA) / 2;
-  }
-
-  // 2. Solve for break-even comparable monthly rent ($ between $300 and $18,000)
-  let rentFlip = null;
-  let loR = 300, hiR = 18000;
-  const dLoR = evalDiff({ rent: loR });
-  const dHiR = evalDiff({ rent: hiR });
-  if ((dLoR <= 0 && dHiR >= 0) || (dLoR >= 0 && dHiR <= 0)) {
-    for (let i = 0; i < 14; i++) {
-      const mid = (loR + hiR) / 2;
-      const dMid = evalDiff({ rent: mid });
-      if ((dMid >= 0) === (dHiR >= 0)) hiR = mid;
-      else loR = mid;
-    }
-    rentFlip = Math.round((loR + hiR) / 2);
-  }
-
-  const parts = [];
-  if (baseNwDiff >= 0) {
-    if (appFlip !== null && appFlip >= -1.9 && appFlip <= 11.9) {
-      parts.push(`home appreciation below <strong>${appFlip.toFixed(2)}%/yr</strong> (vs. ${g('appreciation').toFixed(2)}% now)`);
-    }
-    if (rentFlip !== null && rentFlip > 310 && rentFlip < 17900) {
-      parts.push(`comparable rent below <strong>${fmtD(rentFlip)}/mo</strong> (vs. ${fmtD(g('rent'))}/mo now)`);
-    }
-    return parts.length
-      ? `⚖️ <strong>To flip verdict to Renting:</strong> Requires ${parts.join(' <em>or</em> ')}.`
-      : `⚖️ <strong>Strong Buying Lead:</strong> Buying remains ahead across standard rent and appreciation ranges over this horizon.`;
-  } else {
-    if (appFlip !== null && appFlip >= -1.9 && appFlip <= 11.9) {
-      parts.push(`home appreciation of at least <strong>${appFlip.toFixed(2)}%/yr</strong> (vs. ${g('appreciation').toFixed(2)}% now)`);
-    }
-    if (rentFlip !== null && rentFlip > 310 && rentFlip < 17900) {
-      parts.push(`comparable rent of at least <strong>${fmtD(rentFlip)}/mo</strong> (vs. ${fmtD(g('rent'))}/mo now)`);
-    }
-    return parts.length
-      ? `⚖️ <strong>To flip verdict to Buying:</strong> Requires ${parts.join(' <em>or</em> ')}.`
-      : `⚖️ <strong>Strong Renting Lead:</strong> Renting + investing remains ahead even at 12%/yr appreciation over this short horizon.`;
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════
 // MAIN UI UPDATE
 // ═══════════════════════════════════════════════════════════════
 function calc() {
@@ -3805,7 +3729,7 @@ function calc() {
     $('rc-local').textContent = (tp.localRate * 100).toFixed(1) + '%';
   }
 
-  // ── 2. Header, Verdict Banner, Sensitivity Line & Sticky Mobile Bar
+  // ── 2. Header, Verdict Banner & Sticky Mobile Bar
   const horizon = sim.horizon;
   $('horizonBadge').textContent = horizon + '-Year Analysis';
 
@@ -3830,10 +3754,6 @@ function calc() {
     vEl.style.background  = 'var(--rent-light)';
     vEl.style.borderColor = 'var(--rent-border)';
     vEl.style.borderLeft  = '4px solid var(--rent)';
-  }
-
-  if ($('verdictSensitivity')) {
-    $('verdictSensitivity').innerHTML = computeFlipSensitivity(taxOn, s.buyNW_nom - s.rentNW_nom);
   }
 
   if ($('msvTitle') && $('msvSub')) {
