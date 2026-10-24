@@ -340,6 +340,259 @@ header p {
   padding: 16px 18px 36px;
 }
 
+/* ── ALL-IN-ONE NATURAL LANGUAGE SCENARIO BAR ── */
+.nl-box {
+  background: linear-gradient(180deg, var(--buy-light) 0%, var(--card) 100%);
+  border: 1.5px solid var(--buy-border);
+  border-radius: var(--card-radius);
+  padding: 11px 12px;
+  margin-bottom: 13px;
+  box-shadow: var(--card-shadow);
+}
+.nl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+.nl-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.nl-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--buy-dark);
+}
+.nl-mode-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1.5px 6.5px;
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--buy);
+  border: 1px solid var(--buy-border);
+  white-space: nowrap;
+}
+.nl-mode-badge.connected {
+  background: var(--green-light);
+  color: var(--green);
+  border-color: var(--green-border);
+}
+.nl-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.nl-mini-btn {
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 2.5px 7.5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.nl-mini-btn:hover {
+  border-color: var(--buy);
+  color: var(--buy);
+  background: var(--surface-hover);
+}
+.nl-mini-btn.active {
+  background: var(--buy);
+  color: #ffffff;
+  border-color: var(--buy);
+}
+.nl-textarea {
+  width: 100%;
+  min-height: 68px;
+  resize: vertical;
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.nl-textarea:focus {
+  border-color: var(--buy);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.16);
+}
+.nl-textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.85;
+}
+.nl-subbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.nl-example-link {
+  background: none;
+  border: none;
+  color: var(--buy);
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.nl-example-link:hover {
+  color: var(--buy-dark);
+}
+.nl-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 7px;
+}
+.nl-apply-btn {
+  flex: 1;
+  background: var(--buy);
+  color: #ffffff;
+  border: none;
+  border-radius: 7px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.nl-apply-btn:hover {
+  opacity: 0.93;
+}
+.nl-apply-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.nl-secondary-btn {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  padding: 7px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.nl-secondary-btn:hover {
+  border-color: var(--buy);
+  color: var(--buy);
+  background: var(--surface-hover);
+}
+/* Optional Connect AI Key Drawer */
+.nl-key-drawer {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 10px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+.nl-key-drawer.open {
+  display: block;
+}
+.nl-key-drawer label {
+  display: block;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+.nl-key-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+.nl-key-select,
+.nl-key-input {
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 11.5px;
+  padding: 5px 7px;
+  outline: none;
+}
+.nl-key-select {
+  width: 135px;
+  font-weight: 600;
+}
+.nl-key-input {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.nl-key-note {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.nl-key-note a {
+  color: var(--buy);
+  font-weight: 600;
+  text-decoration: none;
+}
+.nl-key-note a:hover {
+  text-decoration: underline;
+}
+/* Applied Chips & Status */
+.nl-status {
+  display: none;
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px dashed var(--border-strong);
+}
+.nl-status.visible {
+  display: block;
+}
+.nl-status-msg {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.nl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.nl-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6.5px;
+  border-radius: 5px;
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes rowPulse {
+  0%   { background-color: var(--buy-light); }
+  100% { background-color: transparent; }
+}
+.row-updated-flash {
+  animation: rowPulse 1.4s ease-out;
+  border-radius: 6px;
+}
+
 /* ── PRESET BAR ── */
 .presets-box {
   background: var(--surface-2);
@@ -1248,6 +1501,60 @@ canvas { max-height: 270px; }
       <p><strong>Hover over tiles &amp; waterfall rows:</strong> Hover over any multi-variable tile or waterfall line (marked with <code>∑</code>) to see the exact formula and numbers behind it.</p>
       <p><strong>Apples-to-apples Net Worth methodology:</strong> Both the Buyer and Renter start with the same upfront cash and spend the same monthly cash flow. Any upfront cash or monthly savings the Renter doesn't spend on housing is invested in the stock market (minus a 1-month security deposit locked at 0% return). Conversely, in years where owning is cheaper than renting, the Buyer invests the monthly savings.</p>
       <p><strong>Today's Dollars toggle (top bar):</strong> Expresses all future net worth and cost figures in today's purchasing power, discounted by the inflation rate slider.</p>
+    </div>
+
+    <!-- All-in-One Natural Language Scenario Bar -->
+    <div class="nl-box">
+      <div class="nl-header">
+        <div class="nl-title-wrap">
+          <span class="nl-title">✨ Describe Your Situation</span>
+          <span class="nl-mode-badge" id="nlModeBadge">⚡ Smart Parser ($0)</span>
+        </div>
+        <div class="nl-header-actions">
+          <button type="button" class="nl-mini-btn" id="btnToggleKeyDrawer" onclick="toggleNLKeyDrawer()" title="Optional: Connect your own Gemini, OpenAI, or Claude API key">🔑 Connect AI Key</button>
+          <button type="button" class="nl-mini-btn" id="btnShareLink" onclick="copyShareableScenarioLink()" title="Copy a direct URL link with your current numbers to share with friends">🔗 Share Link</button>
+        </div>
+      </div>
+
+      <textarea class="nl-textarea" id="nlInput" placeholder="Describe your income, marital status, current rent, target home price, down payment, rate, how long you'll stay, or refi/ADU plans (or paste a JSON response from ChatGPT/Claude)…"></textarea>
+
+      <div class="nl-subbar">
+        <button type="button" class="nl-example-link" onclick="fillNLExample()">💡 Try a sample scenario description</button>
+        <span style="font-size:10px;color:var(--muted)">Ctrl/Cmd + Enter to apply</span>
+      </div>
+
+      <div class="nl-actions">
+        <button type="button" class="nl-apply-btn" id="btnApplyNL" onclick="applyNaturalLanguageScenario()">✨ Apply to Dashboard</button>
+        <button type="button" class="nl-secondary-btn" id="btnCopyPrompt" onclick="copyPromptForExternalAI()" title="Copy a ready-made prompt to paste into your own ChatGPT, Claude, or Gemini tab">📋 Copy for ChatGPT/Claude</button>
+      </div>
+
+      <!-- Optional Connect AI Key Drawer (BYOK stored in localStorage) -->
+      <div class="nl-key-drawer" id="nlKeyDrawer">
+        <label for="nlApiKey">Optional: Connect Your Own AI Key (Stored only in your browser)</label>
+        <div class="nl-key-row">
+          <select class="nl-key-select" id="nlProvider" onchange="onNLProviderChange()">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI (GPT-4o)</option>
+            <option value="anthropic">Anthropic Claude</option>
+          </select>
+          <input type="password" class="nl-key-input" id="nlApiKey" placeholder="Paste API key (e.g. AIzaSy... or sk-...)" autocomplete="off">
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:5px;">
+          <button type="button" class="nl-mini-btn active" onclick="saveNLApiKey()">Save Key</button>
+          <button type="button" class="nl-mini-btn" onclick="clearNLApiKey()">Disconnect / Clear Key</button>
+        </div>
+        <p class="nl-key-note">
+          🔒 Your key is saved strictly in your own browser's <code>localStorage</code> and is never shared.
+          Want a <strong>$0 free API key</strong>? Get a free Gemini key in 15 seconds at
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio ↗</a>.
+        </p>
+      </div>
+
+      <!-- Applied Feedback Chips -->
+      <div class="nl-status" id="nlStatusArea">
+        <div class="nl-status-msg" id="nlStatusMsg"></div>
+        <div class="nl-chips" id="nlChips"></div>
+      </div>
     </div>
 
     <!-- Quick Presets -->
@@ -3752,11 +4059,781 @@ function calc() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// ALL-IN-ONE NATURAL LANGUAGE SCENARIO ENGINE + BYOK + URL SHARE
+// ═══════════════════════════════════════════════════════════════
+const NL_STORAGE_KEY_PROVIDER = 'bvr_nl_provider';
+const NL_STORAGE_KEY_APIKEY   = 'bvr_nl_apikey';
+
+const NL_EXAMPLES = [
+  "My wife and I make $245,000 combined and currently pay $2,950/mo rent. We're looking at a $725,000 home with 15% down at 6.25% interest, planning to stay 8 years, spending $15,000 on upfront renovations, and hoping to refinance to 5.25% in year 3.",
+  "Single earner making $115,000/yr, currently renting for $2,100/mo. Looking to buy a $485,000 townhouse with $200/mo HOA, putting 10% down at 6.5% rate, staying 6 years.",
+  "Married couple earning $320,000 combined, renting at $3,600/mo. Targeting an $850,000 house with 20% down at 6.15% for 12 years, and renting out a basement ADU for $1,650/mo (25% of space)."
+];
+let nlExampleIdx = 0;
+
+function fillNLExample() {
+  const box = $('nlInput');
+  box.value = NL_EXAMPLES[nlExampleIdx % NL_EXAMPLES.length];
+  nlExampleIdx++;
+  box.focus();
+}
+
+function getStoredAIConfig() {
+  try {
+    const provider = localStorage.getItem(NL_STORAGE_KEY_PROVIDER) || 'gemini';
+    const apiKey   = (localStorage.getItem(NL_STORAGE_KEY_APIKEY) || '').trim();
+    return { provider, apiKey };
+  } catch (e) {
+    return { provider: 'gemini', apiKey: '' };
+  }
+}
+
+function updateNLModeBadge() {
+  const { provider, apiKey } = getStoredAIConfig();
+  const badge = $('nlModeBadge');
+  const btn   = $('btnToggleKeyDrawer');
+  if (!badge) return;
+
+  const providerNames = { gemini: 'Gemini AI', openai: 'OpenAI GPT', anthropic: 'Claude AI' };
+  if (apiKey) {
+    badge.textContent = '🔑 ' + (providerNames[provider] || 'AI') + ' Connected';
+    badge.classList.add('connected');
+    if (btn) btn.textContent = '🔑 AI Key ✓';
+  } else if (typeof window !== 'undefined' && (window.LanguageModel || (window.ai && window.ai.languageModel))) {
+    badge.textContent = '🧠 Browser AI + Smart Parser ($0)';
+    badge.classList.remove('connected');
+    if (btn) btn.textContent = '🔑 Connect AI Key';
+  } else {
+    badge.textContent = '⚡ Smart Parser ($0)';
+    badge.classList.remove('connected');
+    if (btn) btn.textContent = '🔑 Connect AI Key';
+  }
+}
+
+function toggleNLKeyDrawer() {
+  const drawer = $('nlKeyDrawer');
+  const btn    = $('btnToggleKeyDrawer');
+  if (!drawer) return;
+  const isOpen = drawer.classList.toggle('open');
+  if (btn) btn.classList.toggle('active', isOpen);
+  if (isOpen) {
+    const { provider, apiKey } = getStoredAIConfig();
+    $('nlProvider').value = provider;
+    $('nlApiKey').value   = apiKey;
+    onNLProviderChange();
+  }
+}
+
+function onNLProviderChange() {
+  const p = $('nlProvider').value;
+  const input = $('nlApiKey');
+  if (p === 'gemini') input.placeholder = 'Paste Gemini API key (AIzaSy...)';
+  else if (p === 'openai') input.placeholder = 'Paste OpenAI API key (sk-...)';
+  else input.placeholder = 'Paste Anthropic API key (sk-ant-...)';
+}
+
+function saveNLApiKey() {
+  const provider = $('nlProvider').value;
+  const apiKey   = $('nlApiKey').value.trim();
+  try {
+    localStorage.setItem(NL_STORAGE_KEY_PROVIDER, provider);
+    localStorage.setItem(NL_STORAGE_KEY_APIKEY, apiKey);
+  } catch (e) {}
+  updateNLModeBadge();
+  $('nlKeyDrawer').classList.remove('open');
+  $('btnToggleKeyDrawer').classList.remove('active');
+  showNLStatus(apiKey ? '✓ Saved API key locally in your browser.' : 'Switched to built-in Smart Parser ($0).', []);
+}
+
+function clearNLApiKey() {
+  try {
+    localStorage.removeItem(NL_STORAGE_KEY_APIKEY);
+  } catch (e) {}
+  $('nlApiKey').value = '';
+  updateNLModeBadge();
+  $('nlKeyDrawer').classList.remove('open');
+  $('btnToggleKeyDrawer').classList.remove('active');
+  showNLStatus('Disconnected API key — using built-in Smart Parser ($0).', []);
+}
+
+// Helper to parse numbers like "$725k", "1.1m", "240,000", "6.25"
+function parseHumanNumber(rawStr, suffix) {
+  if (!rawStr) return NaN;
+  let val = parseFloat(String(rawStr).replace(/,/g, ''));
+  if (isNaN(val)) return NaN;
+  const s = (suffix || '').toLowerCase();
+  if (s === 'k' || s === 'thousand') val *= 1000;
+  else if (s === 'm' || s === 'mil' || s === 'million') val *= 1000000;
+  return val;
+}
+
+// Comprehensive Built-in Smart Natural Language Parser ($0, Instant)
+function parseScenarioLocally(text) {
+  const raw = String(text || '').trim();
+  if (!raw) return {};
+
+  // 1. Check if user pasted a JSON block (e.g., from ChatGPT / Claude)
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    try {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed && typeof parsed === 'object') return parsed;
+    } catch (e) {}
+  }
+
+  // 2. Check if user pasted a shareable URL with query parameters
+  if (raw.includes('?') && (raw.includes('homePrice=') || raw.includes('rent=') || raw.includes('income='))) {
+    try {
+      const qStr = raw.slice(raw.indexOf('?'));
+      const params = new URLSearchParams(qStr);
+      const fromUrl = {};
+      params.forEach((v, k) => {
+        if (k === 'mfj' || k === 'refiToggle' || k === 'rentalToggle' || k === 'taxToggle') {
+          fromUrl[k] = (v === '1' || v === 'true');
+        } else if (!isNaN(parseFloat(v))) {
+          fromUrl[k] = parseFloat(v);
+        }
+      });
+      if (Object.keys(fromUrl).length > 0) return fromUrl;
+    } catch (e) {}
+  }
+
+  const out = {};
+  const lower = raw.toLowerCase();
+
+  // Filing status (Married vs Single)
+  if (/\b(married|wife|husband|spouse|fiance|fiancee|joint|mfj|couple|partner\s+and\s+i|my\s+partner|combined\s+income|we\s+make|we\s+earn)\b/i.test(raw)) {
+    out.mfj = true;
+    out.taxToggle = true;
+  } else if (/\b(single|unmarried|solo|filing\s+single|just\s+me)\b/i.test(raw)) {
+    out.mfj = false;
+    out.taxToggle = true;
+  }
+
+  // Explicit tax toggle off/on
+  if (/\b(ignore\s+tax|no\s+tax|without\s+tax|disable\s+tax|taxes\s+off)\b/i.test(lower)) {
+    out.taxToggle = false;
+  }
+
+  // Stay Horizon (years)
+  const horizonPatterns = [
+    /(?:stay|staying|live\s+there|keep\s+it|hold|holding|plan\s+to\s+stay|horizon(?:\s+of)?|for\s+about|for\s+around)\s*(?:for\s*)?(?:about\s*|around\s*)?(\d{1,2})\s*(?:years?|yrs?)\b/i,
+    /\b(\d{1,2})[\s-]*(?:year|yr)\s+(?:horizon|stay|plan|timeline|timeframe)\b/i,
+    /\b(?:sell|selling|move|moving\s+out)\s+(?:in|after)\s+(\d{1,2})\s*(?:years?|yrs?)\b/i,
+    /\b(?:over|for)\s+(\d{1,2})\s*(?:years?|yrs?)\b(?!\s*(?:loan|mortgage|fixed|term))/i
+  ];
+  for (const pat of horizonPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const yrs = parseInt(m[1], 10);
+      if (yrs >= 1 && yrs <= 30) { out.horizon = yrs; break; }
+    }
+  }
+
+  // Loan Term (10, 15, 20, 25, 30 yr loan/mortgage/fixed)
+  const termMatch = raw.match(/\b(10|15|20|25|30)[\s-]*(?:year|yr)\s+(?:loan|mortgage|fixed|term|amortization)\b/i);
+  if (termMatch) {
+    out.loanTerm = parseInt(termMatch[1], 10);
+  }
+
+  // Household Income
+  const incomePatterns = [
+    /(?:make|making|earn|earning|income(?:\s+is|\s+of)?|salary(?:\s+is|\s+of)?|combined(?:\s+income)?(?:\s+of)?|household\s+income(?:\s+of)?|gross(?:ing)?)\s*(?:about\s*|around\s*|of\s*)?\$?\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|m|mil|million)?\b/i,
+    /\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|m|mil|million)?\s*(?:\/yr|\/year|a\s+year|per\s+year|annual|combined|household)?\s*(?:income|salary|combined|gross|w-?2)/i
+  ];
+  for (const pat of incomePatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      let inc = parseHumanNumber(m[1], m[2]);
+      if (inc > 0 && inc < 1000 && !m[2]) inc *= 1000; // e.g. "making 180 a year"
+      if (inc >= 20000 && inc <= 2000000) {
+        out.income = Math.round(inc);
+        if (out.taxToggle === undefined) out.taxToggle = true;
+        break;
+      }
+    }
+  }
+
+  // House Hack / ADU / Roommate Rental Income (parse before comparable rent so ADU rent isn't confused with current rent)
+  const hasADUKeyword = /\b(adu|house\s*hack(?:ing)?|basement(?:\s+unit|\s+apt|\s+apartment)?|in-?law(?:\s+suite|\s+unit)?|roommate|tenant|rent(?:ing)?\s+out|sublet|duplex)\b/i.test(raw);
+  if (/\b(no\s+adu|no\s+rental\s+income|not\s+renting\s+out)\b/i.test(lower)) {
+    out.rentalToggle = false;
+  } else if (hasADUKeyword) {
+    out.rentalToggle = true;
+    const aduRentPatterns = [
+      /(?:adu|basement|unit|suite|roommate|tenant|rent(?:ing)?\s+out[^;]*?)\s*(?:for|at|generating|bringing\s+in|paying|of)?\s*\$\s*([\d,]+(?:\.\d+)?)\s*(k)?/i,
+      /\$\s*([\d,]+(?:\.\d+)?)\s*(?:\/mo|\/month|a\s+month|per\s+month|mo)?\s*(?:from\s+|for\s+|in\s+)?(?:an?\s+)?(?:adu|basement|roommate|tenant|rental\s+income)/i
+    ];
+    for (const pat of aduRentPatterns) {
+      const m = raw.match(pat);
+      if (m) {
+        const rVal = parseHumanNumber(m[1], m[2]);
+        if (rVal >= 200 && rVal <= 10000) { out.rentalIncome = Math.round(rVal); break; }
+      }
+    }
+    const spaceMatch = raw.match(/(\d{1,2})\s*%\s*(?:of\s+(?:the\s+)?(?:home|house|space|sq\s*ft|square\s+footage)|rental\s+share|adu\s+share)/i);
+    if (spaceMatch) {
+      const sp = parseInt(spaceMatch[1], 10);
+      if (sp >= 5 && sp <= 75) out.rentalPct = sp;
+    }
+  }
+
+  // Current Comparable Monthly Rent
+  const rentPatterns = [
+    /(?:current(?:ly)?\s+rent(?:ing)?(?:\s+for|\s+at|\s+is)?|rent(?:ing)?\s+(?:for|at)|pay(?:ing)?\s+rent(?:\s+of)?|rent\s+is|rent\s+of|monthly\s+rent(?:\s+is|\s+of)?)\s*\$\s*([\d,]+(?:\.\d+)?)\s*(k)?/i,
+    /(?:pay|paying)\s*\$\s*([\d,]+(?:\.\d+)?)\s*(k)?\s*(?:\/mo|\/month|a\s+month|per\s+month)?\s*(?:in\s+rent|for\s+rent|rent)\b/i,
+    /\$\s*([\d,]+(?:\.\d+)?)\s*(k)?\s*(?:\/mo|\/month|a\s+month|per\s+month|monthly)?\s*(?:current\s+)?rent\b/i
+  ];
+  for (const pat of rentPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const r = parseHumanNumber(m[1], m[2]);
+      if (r >= 500 && r <= 20000 && r !== out.rentalIncome) {
+        out.rent = Math.round(r);
+        break;
+      }
+    }
+  }
+
+  // Home Purchase Price
+  const pricePatterns = [
+    /\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|m|mil|million)?\s*(?:home|house|condo|townhouse|townhome|property|place|purchase|budget)\b/i,
+    /(?:home|house|condo|townhouse|townhome|property|place|purchase\s+price|home\s+price|buying(?:\s+a\s+\w+)?|buy(?:\s+a\s+\w+)?|looking\s+at(?:\s+an?)?|targeting(?:\s+an?)?|budget(?:\s+of|\s+is)?)\s*(?:for|at|around|about|of|is|near)?\s*\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|m|mil|million)?/i
+  ];
+  for (const pat of pricePatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      let p = parseHumanNumber(m[1], m[2]);
+      if (p >= 100 && p < 1000 && !m[2]) p *= 1000;
+      if (p >= 100000 && p <= 5000000 && p !== out.income) {
+        out.homePrice = Math.round(p);
+        break;
+      }
+    }
+  }
+
+  // Down Payment (% or $)
+  const downPctPatterns = [
+    /(\d{1,2}(?:\.\d+)?)\s*%\s*(?:down(?:\s+payment)?|dp)\b/i,
+    /(?:down\s+payment|put(?:ting)?\s+down)\s*(?:of|is|around|at)?\s*(\d{1,2}(?:\.\d+)?)\s*%/i
+  ];
+  for (const pat of downPctPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const dp = parseFloat(m[1]);
+      if (dp >= 0 && dp <= 90) { out.downPct = dp; break; }
+    }
+  }
+  if (out.downPct === undefined) {
+    const downDollarPatterns = [
+      /\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|m|mil)?\s*(?:down\s+payment|down)\b/i,
+      /(?:down\s+payment(?:\s+of)?|put(?:ting)?\s+down)\s*\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|m|mil)?\b/i
+    ];
+    for (const pat of downDollarPatterns) {
+      const m = raw.match(pat);
+      if (m) {
+        const dAmt = parseHumanNumber(m[1], m[2]);
+        const basePrice = out.homePrice || g('homePrice');
+        if (dAmt > 1000 && basePrice > 0) {
+          const computedPct = Math.round((dAmt / basePrice) * 100);
+          if (computedPct >= 3 && computedPct <= 50) {
+            out.downPct = computedPct;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // Future Refinance (parse before initial mortgage rate so we can distinguish refi rate vs purchase rate)
+  const hasRefi = /\b(refi|refinance|refinancing)\b/i.test(raw);
+  if (/\b(no\s+refi|without\s+refi|don't\s+refi)\b/i.test(lower)) {
+    out.refiToggle = false;
+  } else if (hasRefi) {
+    out.refiToggle = true;
+    const refiSegMatch = raw.match(/(?:refi|refinance|refinancing)(?:[^.;]|\.\d)*/i);
+    const refiSeg = refiSegMatch ? refiSegMatch[0] : '';
+    const rRateMatch = refiSeg.match(/(\d(?:\.\d{1,3})?)\s*%/);
+    if (rRateMatch) {
+      const rr = parseFloat(rRateMatch[1]);
+      if (rr >= 2.0 && rr <= 9.0) out.refiRate = rr;
+    }
+    const rYrMatch = refiSeg.match(/(?:in\s+year|year|yr|in|after)\s+(\d{1,2})\b/i);
+    if (rYrMatch) {
+      const ry = parseInt(rYrMatch[1], 10);
+      if (ry >= 1 && ry <= 15) out.refiYear = ry;
+    }
+  }
+
+  // Initial Mortgage Interest Rate
+  const cleanedForRate = raw.replace(/(?:refi|refinance|refinancing)(?:[^.;]|\.\d)*/gi, '');
+  const ratePatterns = [
+    /(\d(?:\.\d{1,3})?)\s*%\s*(?:mortgage|interest(?:\s+rate)?|rate|apr|fixed)/i,
+    /(?:mortgage\s+rate|interest\s+rate|rate|interest|at|financed\s+at)\s*(?:of|is|around|at)?\s*(\d(?:\.\d{1,3})?)\s*%/i
+  ];
+  for (const pat of ratePatterns) {
+    const m = cleanedForRate.match(pat);
+    if (m) {
+      const mr = parseFloat(m[1]);
+      if (mr >= 2.0 && mr <= 12.0) { out.mortgageRate = mr; break; }
+    }
+  }
+
+  // Upfront Renovation / Furnishing / Repairs
+  const renoPatterns = [
+    /\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand)?\s*(?:for\s+|in\s+|on\s+)?(?:upfront\s+|initial\s+)?(?:reno|renovation|renovations|remodel|repairs|furnishing|furniture|upgrades)/i,
+    /(?:reno|renovation|renovations|remodel|repairs|furnishing|furniture)\s*(?:budget|cost|of|around|for)?\s*\$\s*([\d,]+(?:\.\d+)?)\s*(k|thousand)?/i
+  ];
+  for (const pat of renoPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const rc = parseHumanNumber(m[1], m[2]);
+      if (rc >= 0 && rc <= 200000) { out.renoCost = Math.round(rc); break; }
+    }
+  }
+
+  // HOA Fees
+  if (/\b(no\s+hoa|0\s+hoa|\$0\s+hoa)\b/i.test(lower)) {
+    out.hoa = 0;
+  } else {
+    const hoaPatterns = [
+      /\$\s*([\d,]+(?:\.\d+)?)\s*(?:\/mo|\/month|monthly)?\s*hoa\b/i,
+      /\bhoa\s*(?:fees?|dues?|of|is|around)?\s*\$\s*([\d,]+(?:\.\d+)?)/i
+    ];
+    for (const pat of hoaPatterns) {
+      const m = raw.match(pat);
+      if (m) {
+        const hVal = parseHumanNumber(m[1], '');
+        if (hVal >= 0 && hVal <= 3000) { out.hoa = Math.round(hVal); break; }
+      }
+    }
+  }
+
+  // Home Appreciation Rate
+  const apprPatterns = [
+    /(\d(?:\.\d{1,2})?)\s*%\s*(?:home\s+)?(?:appreciation|home\s+growth|price\s+growth)/i,
+    /(?:appreciation|appreciate|home\s+growth)\s*(?:of|at|around|is)?\s*(\d(?:\.\d{1,2})?)\s*%/i
+  ];
+  for (const pat of apprPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const ap = parseFloat(m[1]);
+      if (ap >= 0 && ap <= 10) { out.appreciation = ap; break; }
+    }
+  }
+
+  // Stock / Investment Return Rate
+  const oppPatterns = [
+    /(\d{1,2}(?:\.\d{1,2})?)\s*%\s*(?:stock|market|investment|portfolio|s&p|equity)\s*(?:return|growth|yield)/i,
+    /(?:stock|market|investment|portfolio)\s+(?:return|growth)(?:\s+of|\s+at|\s+is)?\s*(\d{1,2}(?:\.\d{1,2})?)\s*%/i
+  ];
+  for (const pat of oppPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const op = parseFloat(m[1]);
+      if (op >= 1 && op <= 15) { out.opportunity = op; break; }
+    }
+  }
+
+  // Inflation Rate
+  const infPatterns = [
+    /(\d{1,2}(?:\.\d{1,2})?)\s*%\s*inflation/i,
+    /inflation\s*(?:of|at|is|around)?\s*(\d{1,2}(?:\.\d{1,2})?)\s*%/i
+  ];
+  for (const pat of infPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const inf = parseFloat(m[1]);
+      if (inf >= 0 && inf <= 10) { out.inflation = inf; break; }
+    }
+  }
+
+  // Property Tax Rate
+  const ptaxPatterns = [
+    /(\d(?:\.\d{1,2})?)\s*%\s*property\s+tax/i,
+    /property\s+tax(?:es)?\s*(?:rate\s*)?(?:of|at|is|around)?\s*(\d(?:\.\d{1,2})?)\s*%/i
+  ];
+  for (const pat of ptaxPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const pt = parseFloat(m[1]);
+      if (pt >= 0.3 && pt <= 3.0) { out.propTax = pt; break; }
+    }
+  }
+
+  // Annual Rent Escalation
+  const rentIncPatterns = [
+    /rent\s+(?:increase|growth|escalation|goes\s+up)(?:\s+of|\s+at|\s+by)?\s*(\d(?:\.\d{1,2})?)\s*%/i,
+    /(\d(?:\.\d{1,2})?)\s*%\s*rent\s+(?:increase|growth|escalation)/i
+  ];
+  for (const pat of rentIncPatterns) {
+    const m = raw.match(pat);
+    if (m) {
+      const ri = parseFloat(m[1]);
+      if (ri >= 0 && ri <= 10) { out.rentIncrease = ri; break; }
+    }
+  }
+
+  return out;
+}
+
+// System prompt schema used for connected API keys, Chrome Built-in AI, or Copy-for-ChatGPT/Claude
+function buildAISystemPrompt() {
+  return `You extract Buy vs. Rent housing scenario parameters into a flat JSON object.
+Only include keys that are explicitly mentioned or clearly implied by the user's description.
+Valid JSON keys and allowed ranges:
+- "horizon": integer (1 to 30, years planning to stay)
+- "homePrice": number (150000 to 2500000, purchase price in $)
+- "downPct": integer (3 to 50, down payment %; if user gives $ down payment, convert to % of homePrice)
+- "mortgageRate": number (2.5 to 10.0, annual mortgage interest rate %)
+- "rent": number (800 to 10000, current/comparable monthly rent in $)
+- "appreciation": number (0.0 to 8.0, annual home appreciation %)
+- "opportunity": number (2.0 to 12.0, annual stock return %)
+- "inflation": number (1.0 to 10.0, annual inflation %)
+- "loanTerm": integer (10, 15, 20, 25, or 30)
+- "pmiRate": number (0.0 to 1.5, annual PMI %)
+- "refiToggle": boolean (true if planning a future refinance)
+- "refiRate": number (2.5 to 8.0, future refi interest rate %)
+- "refiYear": integer (1 to 15, year of refinance)
+- "refiCostPct": number (0.0 to 3.0, refi closing cost %)
+- "propTax": number (0.3 to 3.0, initial property tax %)
+- "homeIns": number (0.1 to 1.5, annual home insurance %)
+- "maintenance": number (0.3 to 3.0, annual maintenance %)
+- "hoa": number (0 to 1500, monthly HOA fee in $)
+- "renoCost": number (0 to 100000, upfront renovation/furnishing budget in $)
+- "buyClosure": number (1.0 to 6.0, buying closing cost %)
+- "sellClosure": number (3.0 to 10.0, selling closing cost %)
+- "moving": number (0 to 15000, initial moving cost in $)
+- "rentIncrease": number (0.0 to 8.0, annual rent increase %)
+- "renterMoveFreq": integer (0 to 10, years between renter repeat moves; 0 = initial only)
+- "rentalToggle": boolean (true if renting out an ADU, basement, or room)
+- "rentalIncome": number (300 to 4000, gross monthly ADU/roommate rent in $)
+- "rentalPct": integer (10 to 60, % of home square footage rented out)
+- "taxToggle": boolean (true to model income taxes)
+- "mfj": boolean (true for Married Filing Jointly / couple, false for Single)
+- "income": number (30000 to 1000000, gross annual household income in $)
+- "note": string (1 short sentence summarizing the scenario)
+Return ONLY valid JSON with no markdown code fences.`;
+}
+
+async function callConnectedLLM(userText) {
+  const { provider, apiKey } = getStoredAIConfig();
+  const sysPrompt = buildAISystemPrompt();
+
+  // 1. If user connected an API key (Gemini, OpenAI, or Anthropic)
+  if (apiKey) {
+    if (provider === 'gemini') {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: sysPrompt }] },
+          contents: [{ role: 'user', parts: [{ text: userText }] }],
+          generationConfig: { responseMimeType: 'application/json', temperature: 0.1 }
+        })
+      });
+      if (!resp.ok) throw new Error(`Gemini API HTTP ${resp.status}`);
+      const data = await resp.json();
+      const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+      return { parsed: JSON.parse(txt), source: 'Gemini AI' };
+    }
+
+    if (provider === 'openai') {
+      const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          response_format: { type: 'json_object' },
+          temperature: 0.1,
+          messages: [
+            { role: 'system', content: sysPrompt },
+            { role: 'user', content: userText }
+          ]
+        })
+      });
+      if (!resp.ok) throw new Error(`OpenAI API HTTP ${resp.status}`);
+      const data = await resp.json();
+      const txt = data?.choices?.[0]?.message?.content || '{}';
+      return { parsed: JSON.parse(txt), source: 'OpenAI GPT' };
+    }
+
+    if (provider === 'anthropic') {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-haiku-latest',
+          max_tokens: 600,
+          system: sysPrompt,
+          messages: [{ role: 'user', content: userText }]
+        })
+      });
+      if (!resp.ok) throw new Error(`Claude API HTTP ${resp.status}`);
+      const data = await resp.json();
+      const txt = data?.content?.[0]?.text || '{}';
+      const jsonMatch = txt.match(/\{[\s\S]*\}/);
+      return { parsed: JSON.parse(jsonMatch ? jsonMatch[0] : txt), source: 'Claude AI' };
+    }
+  }
+
+  // 2. Try Chrome Built-in Local AI (window.LanguageModel or window.ai.languageModel) if available
+  try {
+    const lmFactory = window.LanguageModel || (window.ai && window.ai.languageModel);
+    if (lmFactory && typeof lmFactory.create === 'function') {
+      const session = await lmFactory.create({ systemPrompt: sysPrompt });
+      const reply = await session.prompt(userText);
+      const jsonMatch = String(reply).match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return { parsed: JSON.parse(jsonMatch[0]), source: 'Chrome Built-in AI' };
+      }
+    }
+  } catch (e) {
+    // Fall back to local parser silently
+  }
+
+  return null;
+}
+
+const PARAM_LABELS = {
+  horizon:       v => `Stay Horizon → ${v} yrs`,
+  homePrice:     v => `Home Price → ${fmtD(v)}`,
+  downPct:       v => `Down Payment → ${v}%`,
+  mortgageRate:  v => `Mortgage Rate → ${Number(v).toFixed(2)}%`,
+  rent:          v => `Current Rent → ${fmtD(v)}/mo`,
+  appreciation:  v => `Home Appreciation → ${Number(v).toFixed(2)}%/yr`,
+  opportunity:   v => `Stock Return → ${Number(v).toFixed(2)}%/yr`,
+  inflation:     v => `Inflation → ${Number(v).toFixed(1)}%/yr`,
+  loanTerm:      v => `Loan Term → ${v} yrs`,
+  pmiRate:       v => `PMI Rate → ${Number(v).toFixed(2)}%`,
+  refiRate:      v => `Refi Rate → ${Number(v).toFixed(2)}%`,
+  refiYear:      v => `Refi Year → Yr ${v}`,
+  refiCostPct:   v => `Refi Cost → ${Number(v).toFixed(2)}%`,
+  propTax:       v => `Property Tax → ${Number(v).toFixed(2)}%`,
+  homeIns:       v => `Home Insurance → ${Number(v).toFixed(2)}%`,
+  maintenance:   v => `Maintenance → ${Number(v).toFixed(2)}%`,
+  hoa:           v => `HOA → ${fmtD(v)}/mo`,
+  renoCost:      v => `Renovation → ${fmtD(v)}`,
+  buyClosure:    v => `Buying Closing → ${Number(v).toFixed(2)}%`,
+  sellClosure:   v => `Selling Closing → ${Number(v).toFixed(2)}%`,
+  moving:        v => `Moving Cost → ${fmtD(v)}`,
+  rentIncrease:  v => `Rent Growth → ${Number(v).toFixed(2)}%/yr`,
+  renterMoveFreq:v => `Renter Moves → ${v === 0 ? 'Initial only' : 'Every ' + v + ' yrs'}`,
+  rentalIncome:  v => `ADU/Rental Income → ${fmtD(v)}/mo`,
+  rentalPct:     v => `Rental Space Share → ${v}%`,
+  income:        v => `Household Income → ${fmtD(v)}`
+};
+
+function flashRowForInput(id) {
+  const el = $(id);
+  if (!el) return;
+  const row = el.closest ? el.closest('.row') : null;
+  if (row) {
+    row.classList.remove('row-updated-flash');
+    void row.offsetWidth;
+    row.classList.add('row-updated-flash');
+  }
+}
+
+function showNLStatus(msg, chipsList) {
+  const area  = $('nlStatusArea');
+  const msgEl = $('nlStatusMsg');
+  const chips = $('nlChips');
+  if (!area || !msgEl || !chips) return;
+  area.classList.add('visible');
+  msgEl.textContent = msg;
+  chips.innerHTML = (chipsList || []).map(c => `<span class="nl-chip">✓ ${c}</span>`).join('');
+}
+
+function applyExtractedParams(params, sourceLabel) {
+  if (!params || typeof params !== 'object') return 0;
+  const chips = [];
+  let updatedCount = 0;
+
+  // Apply numeric slider inputs
+  inputIds.forEach(id => {
+    if (params[id] !== undefined && $(id)) {
+      const s = $(id);
+      const min = parseFloat(s.min);
+      const max = parseFloat(s.max);
+      let val = parseFloat(params[id]);
+      if (!isNaN(val)) {
+        val = Math.max(min, Math.min(max, val));
+        s.value = val;
+        if ($('n-' + id)) $('n-' + id).value = fmtInputDisplay(id, s.value);
+        updateSliderFill(s);
+        flashRowForInput(id);
+        if (PARAM_LABELS[id]) chips.push(PARAM_LABELS[id](val));
+        updatedCount++;
+      }
+    }
+  });
+
+  // If downPct was updated and pmiRate wasn't explicitly overridden, sync PMI with down payment
+  if (params.downPct !== undefined && params.pmiRate === undefined) {
+    syncPMIWithDownPayment(true);
+    const autoPmi = g('pmiRate');
+    chips.push(`PMI Auto-Adjusted → ${autoPmi.toFixed(2)}%`);
+  } else {
+    syncPMIWithDownPayment(false);
+  }
+
+  // Apply toggles & filing status
+  if (params.mfj !== undefined) {
+    filingMFJ = !!params.mfj;
+    $('btnSingle').classList.toggle('active', !filingMFJ);
+    $('btnMFJ').classList.toggle('active', filingMFJ);
+    chips.push(`Filing Status → ${filingMFJ ? 'Married (MFJ)' : 'Single'}`);
+    updatedCount++;
+  }
+
+  if (params.refiToggle !== undefined) {
+    $('refiToggle').checked = !!params.refiToggle;
+    $('refiBody').classList.toggle('open', !!params.refiToggle);
+    chips.push(`Future Refinance → ${params.refiToggle ? 'On' : 'Off'}`);
+    updatedCount++;
+  }
+
+  if (params.rentalToggle !== undefined) {
+    $('rentalToggle').checked = !!params.rentalToggle;
+    $('rentalBody').classList.toggle('open', !!params.rentalToggle);
+    chips.push(`House Hack / ADU → ${params.rentalToggle ? 'On' : 'Off'}`);
+    updatedCount++;
+  }
+
+  if (params.taxToggle !== undefined) {
+    $('taxToggle').checked = !!params.taxToggle;
+    $('taxBody').classList.toggle('open', !!params.taxToggle);
+    updatedCount++;
+  }
+
+  if (updatedCount > 0) {
+    clearActivePreset();
+    calc();
+    const notePrefix = params.note ? `${params.note} — ` : '';
+    showNLStatus(`${notePrefix}Updated ${chips.length} assumption${chips.length === 1 ? '' : 's'} via ${sourceLabel}:`, chips);
+  } else {
+    showNLStatus(`Could not detect specific numbers or assumptions in that description. Try mentioning home price (e.g. "$650k house"), rent ("$2,800 rent"), income ("making $180k"), or down payment ("15% down").`, []);
+  }
+  return updatedCount;
+}
+
+async function applyNaturalLanguageScenario() {
+  const text = ($('nlInput').value || '').trim();
+  if (!text) {
+    showNLStatus('Type a short description of your situation above (or click "Try a sample scenario description").', []);
+    return;
+  }
+
+  const btn = $('btnApplyNL');
+  const origLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyzing Scenario…';
+
+  try {
+    // Always run local parser first so we can merge or fall back cleanly
+    const localParams = parseScenarioLocally(text);
+    const llmResult   = await callConnectedLLM(text);
+
+    if (llmResult && llmResult.parsed && Object.keys(llmResult.parsed).length > 0) {
+      const merged = Object.assign({}, localParams, llmResult.parsed);
+      applyExtractedParams(merged, llmResult.source);
+    } else {
+      applyExtractedParams(localParams, 'Built-in Smart Parser');
+    }
+  } catch (err) {
+    // Fallback to local parser if API key errors out
+    const localParams = parseScenarioLocally(text);
+    const count = applyExtractedParams(localParams, 'Built-in Smart Parser (API fallback)');
+    if (count === 0) {
+      showNLStatus(`AI Key Error (${err.message}). Check your API key or use the built-in Smart Parser.`, []);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origLabel;
+  }
+}
+
+function copyPromptForExternalAI() {
+  const userDesc = ($('nlInput').value || '').trim() || '[Describe your income, marital status, current rent, target home price, down payment %, mortgage rate, and how many years you plan to stay]';
+  const promptText = `${buildAISystemPrompt()}
+
+User Scenario Description:
+"${userDesc}"
+
+Respond ONLY with the JSON object so I can paste it back into the Buy vs. Rent Net Worth Dashboard.`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(promptText).then(() => {
+      showNLStatus('📋 Copied prompt! Paste it into ChatGPT, Claude, or Gemini, then paste the JSON reply back into the box above and click Apply.', []);
+    });
+  }
+}
+
+function copyShareableScenarioLink() {
+  const url = new URL(window.location.href.split('?')[0]);
+  inputIds.forEach(id => {
+    if ($(id)) url.searchParams.set(id, $(id).value);
+  });
+  url.searchParams.set('mfj', filingMFJ ? '1' : '0');
+  url.searchParams.set('refiToggle', $('refiToggle').checked ? '1' : '0');
+  url.searchParams.set('rentalToggle', $('rentalToggle').checked ? '1' : '0');
+  url.searchParams.set('taxToggle', $('taxToggle').checked ? '1' : '0');
+
+  const shareUrl = url.toString();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showNLStatus('🔗 Copied shareable scenario link to clipboard! Anyone opening this link will see your exact sliders and assumptions.', []);
+    });
+  }
+}
+
+function loadScenarioFromURL() {
+  if (typeof window === 'undefined' || !window.location || !window.location.search) return false;
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('homePrice') && !params.has('rent') && !params.has('income')) return false;
+
+  const extracted = {};
+  params.forEach((v, k) => {
+    if (k === 'mfj' || k === 'refiToggle' || k === 'rentalToggle' || k === 'taxToggle') {
+      extracted[k] = (v === '1' || v === 'true');
+    } else if (!isNaN(parseFloat(v))) {
+      extracted[k] = parseFloat(v);
+    }
+  });
+  if (Object.keys(extracted).length > 0) {
+    applyExtractedParams(extracted, 'Shared Scenario Link');
+    return true;
+  }
+  return false;
+}
+
+if ($('nlInput')) {
+  $('nlInput').addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      applyNaturalLanguageScenario();
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════
 initCharts();
 setAppTheme('fintech');
 applyPreset('default');
+updateNLModeBadge();
+loadScenarioFromURL();
 </script>
 </body>
 </html>
