@@ -340,22 +340,31 @@ header p {
   padding: 16px 18px 36px;
 }
 
-/* ── ALL-IN-ONE NATURAL LANGUAGE SCENARIO BAR ── */
+/* ── ALL-IN-ONE NATURAL LANGUAGE SCENARIO BAR (COLLAPSIBLE) ── */
 .nl-box {
   background: linear-gradient(180deg, var(--buy-light) 0%, var(--card) 100%);
   border: 1.5px solid var(--buy-border);
   border-radius: var(--card-radius);
-  padding: 11px 12px;
   margin-bottom: 13px;
   box-shadow: var(--card-shadow);
+  overflow: hidden;
 }
-.nl-header {
+.nl-toggle-bar {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 9px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 7px;
-  flex-wrap: wrap;
+  gap: 8px;
+  cursor: pointer;
+  text-align: left;
+  user-select: none;
+  transition: background 0.15s;
+}
+.nl-toggle-bar:hover {
+  background: var(--surface-hover);
 }
 .nl-title-wrap {
   display: flex;
@@ -364,10 +373,8 @@ header p {
   flex-wrap: wrap;
 }
 .nl-title {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   color: var(--buy-dark);
 }
 .nl-mode-badge {
@@ -384,6 +391,45 @@ header p {
   background: var(--green-light);
   color: var(--green);
   border-color: var(--green-border);
+}
+.nl-toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.nl-toggle-hint {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--buy);
+  background: var(--card);
+  border: 1px solid var(--buy-border);
+  padding: 1.5px 7px;
+  border-radius: 10px;
+}
+.nl-arrow {
+  font-size: 10px;
+  color: var(--buy);
+  transition: transform 0.2s;
+}
+.nl-box.open .nl-arrow {
+  transform: rotate(90deg);
+}
+.nl-body {
+  display: none;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--buy-border);
+}
+.nl-box.open .nl-body {
+  display: block;
+}
+.nl-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
 }
 .nl-header-actions {
   display: flex;
@@ -435,26 +481,15 @@ header p {
   color: var(--muted);
   opacity: 0.85;
 }
-.nl-subbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
+.nl-disclaimer {
   margin-top: 6px;
-  flex-wrap: wrap;
-}
-.nl-example-link {
-  background: none;
-  border: none;
-  color: var(--buy);
   font-size: 10.5px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
-}
-.nl-example-link:hover {
-  color: var(--buy-dark);
+  line-height: 1.4;
+  color: var(--muted);
+  background: var(--surface-2);
+  border-left: 2.5px solid var(--buy);
+  border-radius: 4px;
+  padding: 5px 8px;
 }
 .nl-actions {
   display: flex;
@@ -1503,57 +1538,65 @@ canvas { max-height: 270px; }
       <p><strong>Today's Dollars toggle (top bar):</strong> Expresses all future net worth and cost figures in today's purchasing power, discounted by the inflation rate slider.</p>
     </div>
 
-    <!-- All-in-One Natural Language Scenario Bar -->
-    <div class="nl-box">
-      <div class="nl-header">
+    <!-- All-in-One Natural Language Scenario Bar (Minimized by Default) -->
+    <div class="nl-box" id="nlBox">
+      <button type="button" class="nl-toggle-bar" onclick="toggleNLBox()">
         <div class="nl-title-wrap">
           <span class="nl-title">✨ Describe Your Situation</span>
           <span class="nl-mode-badge" id="nlModeBadge">⚡ Smart Parser ($0)</span>
         </div>
-        <div class="nl-header-actions">
-          <button type="button" class="nl-mini-btn" id="btnToggleKeyDrawer" onclick="toggleNLKeyDrawer()" title="Optional: Connect your own Gemini, OpenAI, or Claude API key">🔑 Connect AI Key</button>
-          <button type="button" class="nl-mini-btn" id="btnShareLink" onclick="copyShareableScenarioLink()" title="Copy a direct URL link with your current numbers to share with friends">🔗 Share Link</button>
+        <div class="nl-toggle-right">
+          <span class="nl-toggle-hint" id="nlToggleHint">Click to expand</span>
+          <span class="nl-arrow">▶</span>
         </div>
-      </div>
+      </button>
 
-      <textarea class="nl-textarea" id="nlInput" placeholder="Describe your income, marital status, current rent, target home price, down payment, rate, how long you'll stay, or refi/ADU plans (or paste a JSON response from ChatGPT/Claude)…"></textarea>
-
-      <div class="nl-subbar">
-        <button type="button" class="nl-example-link" onclick="fillNLExample()">💡 Try a sample scenario description</button>
-        <span style="font-size:10px;color:var(--muted)">Ctrl/Cmd + Enter to apply</span>
-      </div>
-
-      <div class="nl-actions">
-        <button type="button" class="nl-apply-btn" id="btnApplyNL" onclick="applyNaturalLanguageScenario()">✨ Apply to Dashboard</button>
-        <button type="button" class="nl-secondary-btn" id="btnCopyPrompt" onclick="copyPromptForExternalAI()" title="Copy a ready-made prompt to paste into your own ChatGPT, Claude, or Gemini tab">📋 Copy for ChatGPT/Claude</button>
-      </div>
-
-      <!-- Optional Connect AI Key Drawer (BYOK stored in localStorage) -->
-      <div class="nl-key-drawer" id="nlKeyDrawer">
-        <label for="nlApiKey">Optional: Connect Your Own AI Key (Stored only in your browser)</label>
-        <div class="nl-key-row">
-          <select class="nl-key-select" id="nlProvider" onchange="onNLProviderChange()">
-            <option value="gemini">Google Gemini</option>
-            <option value="openai">OpenAI (GPT-4o)</option>
-            <option value="anthropic">Anthropic Claude</option>
-          </select>
-          <input type="password" class="nl-key-input" id="nlApiKey" placeholder="Paste API key (e.g. AIzaSy... or sk-...)" autocomplete="off">
+      <div class="nl-body" id="nlBody">
+        <div class="nl-toolbar">
+          <button type="button" class="nl-mini-btn" onclick="fillNLExample()">💡 Try a sample scenario</button>
+          <div class="nl-header-actions">
+            <button type="button" class="nl-mini-btn" id="btnToggleKeyDrawer" onclick="toggleNLKeyDrawer()" title="Optional: Connect your own Gemini, OpenAI, or Claude API key">🔑 Connect AI Key</button>
+            <button type="button" class="nl-mini-btn" id="btnShareLink" onclick="copyShareableScenarioLink()" title="Copy a direct URL link with your current numbers to share with friends">🔗 Share Link</button>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:5px;">
-          <button type="button" class="nl-mini-btn active" onclick="saveNLApiKey()">Save Key</button>
-          <button type="button" class="nl-mini-btn" onclick="clearNLApiKey()">Disconnect / Clear Key</button>
-        </div>
-        <p class="nl-key-note">
-          🔒 Your key is saved strictly in your own browser's <code>localStorage</code> and is never shared.
-          Want a <strong>$0 free API key</strong>? Get a free Gemini key in 15 seconds at
-          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio ↗</a>.
-        </p>
-      </div>
 
-      <!-- Applied Feedback Chips -->
-      <div class="nl-status" id="nlStatusArea">
-        <div class="nl-status-msg" id="nlStatusMsg"></div>
-        <div class="nl-chips" id="nlChips"></div>
+        <textarea class="nl-textarea" id="nlInput" placeholder="Describe your income, marital status, current rent, target home price, down payment, rate, how long you'll stay, or refi/ADU plans…"></textarea>
+
+        <div class="nl-disclaimer">
+          ⏱️ <strong>Note:</strong> The free AI option here could take 60 seconds or more to process, but connecting your API key to your preferred AI provider (via <strong>🔑 Connect AI Key</strong> above) makes it much quicker.
+        </div>
+
+        <div class="nl-actions">
+          <button type="button" class="nl-apply-btn" id="btnApplyNL" onclick="applyNaturalLanguageScenario()">✨ Apply to Dashboard</button>
+        </div>
+
+        <!-- Optional Connect AI Key Drawer (BYOK stored in localStorage) -->
+        <div class="nl-key-drawer" id="nlKeyDrawer">
+          <label for="nlApiKey">Optional: Connect Your Own AI Key (Stored only in your browser)</label>
+          <div class="nl-key-row">
+            <select class="nl-key-select" id="nlProvider" onchange="onNLProviderChange()">
+              <option value="gemini">Google Gemini</option>
+              <option value="openai">OpenAI (GPT-4o)</option>
+              <option value="anthropic">Anthropic Claude</option>
+            </select>
+            <input type="password" class="nl-key-input" id="nlApiKey" placeholder="Paste API key (e.g. AIzaSy... or sk-...)" autocomplete="off">
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:5px;">
+            <button type="button" class="nl-mini-btn active" onclick="saveNLApiKey()">Save Key</button>
+            <button type="button" class="nl-mini-btn" onclick="clearNLApiKey()">Disconnect / Clear Key</button>
+          </div>
+          <p class="nl-key-note">
+            🔒 Your key is saved strictly in your own browser's <code>localStorage</code> and is never shared.
+            Want a <strong>$0 free API key</strong>? Get a free Gemini key in 15 seconds at
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio ↗</a> (`aistudio.google.com/apikey`), or use your <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI ↗</a> / <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic ↗</a> key.
+          </p>
+        </div>
+
+        <!-- Applied Feedback Chips -->
+        <div class="nl-status" id="nlStatusArea">
+          <div class="nl-status-msg" id="nlStatusMsg"></div>
+          <div class="nl-chips" id="nlChips"></div>
+        </div>
       </div>
     </div>
 
@@ -4070,6 +4113,14 @@ const NL_EXAMPLES = [
   "Married couple earning $320,000 combined, renting at $3,600/mo. Targeting an $850,000 house with 20% down at 6.15% for 12 years, and renting out a basement ADU for $1,650/mo (25% of space)."
 ];
 let nlExampleIdx = 0;
+
+function toggleNLBox() {
+  const box  = $('nlBox');
+  const hint = $('nlToggleHint');
+  if (!box) return;
+  const isOpen = box.classList.toggle('open');
+  if (hint) hint.textContent = isOpen ? 'Click to collapse' : 'Click to expand';
+}
 
 function fillNLExample() {
   const box = $('nlInput');
