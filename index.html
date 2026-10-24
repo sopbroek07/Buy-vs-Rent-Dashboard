@@ -997,6 +997,83 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border: 1px solid var(--border);
   white-space: nowrap;
 }
+.verdict-sensitivity {
+  margin-top: 6px;
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3.5px 9px;
+  line-height: 1.4;
+}
+
+/* ── STICKY MOBILE VERDICT BAR ── */
+.mobile-sticky-verdict {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--card);
+  border-top: 2px solid var(--buy);
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.14);
+  padding: 9px 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+@media (max-width: 980px) {
+  .mobile-sticky-verdict {
+    display: flex;
+  }
+  .outputs {
+    padding-bottom: 72px;
+  }
+}
+.msv-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.msv-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.msv-text {
+  min-width: 0;
+}
+.msv-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msv-sub {
+  font-size: 10.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msv-btn {
+  background: var(--buy);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
 /* ── CARD GRIDS & HOVER CALCULATION TOOLTIPS ── */
 .cards-4 {
@@ -1500,10 +1577,18 @@ canvas { max-height: 270px; }
     <div class="brand-icon">🏠</div>
     <div>
       <h1>Buy vs. Rent Net Worth Dashboard</h1>
-      <p>Calibrated for Multnomah County / Portland, OR</p>
+      <p id="headerSubtitle">Calibrated for Multnomah County / Portland, OR</p>
     </div>
   </div>
   <div class="header-controls">
+    <div class="theme-picker-wrap" title="Switch tax jurisdiction between Portland/OR, US Federal Only, or Custom State">
+      <span class="theme-picker-label">📍 Taxes:</span>
+      <select class="theme-select" id="taxScopeSelect" onchange="setTaxScope(this.value)">
+        <option value="or_mult" selected>🌲 OR + MultCo / Metro</option>
+        <option value="fed_only">🇺🇸 US Federal Only</option>
+        <option value="custom_state">🗺️ Federal + Custom State</option>
+      </select>
+    </div>
     <div class="theme-picker-wrap" title="Switch visual look &amp; feel">
       <span class="theme-picker-label">🎨 Theme:</span>
       <select class="theme-select" id="themeSelect" onchange="setAppTheme(this.value)">
@@ -1535,7 +1620,7 @@ canvas { max-height: 270px; }
       <p><strong>Type or slide:</strong> Click any value box to type an exact number (with or without commas), or drag the slider. Percentage inputs automatically show their dollar equivalents.</p>
       <p><strong>Hover over tiles &amp; waterfall rows:</strong> Hover over any multi-variable tile or waterfall line (marked with <code>∑</code>) to see the exact formula and numbers behind it.</p>
       <p><strong>Apples-to-apples Net Worth methodology:</strong> Both the Buyer and Renter start with the same upfront cash and spend the same monthly cash flow. Any upfront cash or monthly savings the Renter doesn't spend on housing is invested in the stock market (minus a 1-month security deposit locked at 0% return). Conversely, in years where owning is cheaper than renting, the Buyer invests the monthly savings.</p>
-      <p><strong>Today's Dollars toggle (top bar):</strong> Expresses all future net worth and cost figures in today's purchasing power, discounted by the inflation rate slider.</p>
+      <p><strong>Today's Dollars toggle (top bar):</strong> Expresses all future net worth and cost figures in today's purchasing power, discounted year-by-year by the inflation rate slider.</p>
     </div>
 
     <!-- All-in-One Natural Language Scenario Bar (Minimized by Default) -->
@@ -1603,7 +1688,7 @@ canvas { max-height: 270px; }
     <!-- Quick Presets -->
     <div class="presets-box">
       <div class="presets-header">
-        <span>⚡ Portland Area Scenarios</span>
+        <span id="presetsHeaderTitle">⚡ Portland Area Scenarios</span>
         <button class="reset-btn" onclick="applyPreset('default')" title="Reset all inputs to default values">↺ Reset to Defaults</button>
       </div>
       <div class="preset-pills">
@@ -1780,6 +1865,20 @@ canvas { max-height: 270px; }
               </div>
               <input type="range" id="loanTerm" min="10" max="30" step="5" value="30">
             </div>
+            <div class="row">
+              <div class="row-label">
+                <span class="name">Mortgage discount points (buydown)</span>
+                <div class="val-controls">
+                  <span class="dual-chip" id="d-loanPoints">$0 (0.00% cut)</span>
+                  <div class="num-input-wrap">
+                    <input type="text" inputmode="decimal" class="num-input" id="n-loanPoints">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+              </div>
+              <input type="range" id="loanPoints" min="0.00" max="3.00" step="0.25" value="0.00">
+              <p class="row-hint">Each 1.00% point costs 1% of loan upfront on Day 1, reduces initial mortgage rate by <strong>0.25%</strong>, and is deductible on Schedule A in Year 1.</p>
+            </div>
             <div class="row" id="row-pmiRate">
               <div class="row-label">
                 <span class="name">PMI rate (if &lt;20% down)</span>
@@ -1803,7 +1902,7 @@ canvas { max-height: 270px; }
               <span class="tog-label">Assume future mortgage refinance</span>
             </label>
             <div class="toggle-body" id="refiBody">
-              <p class="section-note">Models refinancing remaining loan balance into a new 30-year fixed loan at the target rate in the selected year.</p>
+              <p class="section-note" id="refiSectionNote">Models refinancing remaining loan balance into a new loan at the target rate in the selected year.</p>
               <div class="row">
                 <div class="row-label">
                   <span class="name">Future refinance rate</span>
@@ -1828,6 +1927,17 @@ canvas { max-height: 270px; }
                   </div>
                 </div>
                 <input type="range" id="refiYear" min="1" max="15" step="1" value="3">
+              </div>
+              <div class="row">
+                <div class="row-label">
+                  <span class="name">Refinance new loan term</span>
+                </div>
+                <div class="filing-btns">
+                  <button type="button" id="btnRefi30" class="active" onclick="setRefiTermMode(30)">30 yrs</button>
+                  <button type="button" id="btnRefi20" onclick="setRefiTermMode(20)">20 yrs</button>
+                  <button type="button" id="btnRefi15" onclick="setRefiTermMode(15)">15 yrs</button>
+                  <button type="button" id="btnRefiRem" onclick="setRefiTermMode('rem')" title="Keep original payoff schedule without resetting the clock">Remaining Term</button>
+                </div>
               </div>
               <div class="row">
                 <div class="row-label">
@@ -1868,7 +1978,11 @@ canvas { max-height: 270px; }
                 </div>
               </div>
               <input type="range" id="propTax" min="0.30" max="3.00" step="0.05" value="1.10">
-              <p class="row-hint">Max rate &amp; annual assessed value growth capped at <strong>3.0%</strong> per Oregon Measure 50.</p>
+              <label class="tax-toggle-row" style="margin-top:6px;">
+                <input type="checkbox" id="propTaxCapToggle" checked onchange="clearActivePreset(); calc();">
+                <div class="tog-track"></div>
+                <span class="tog-label" style="font-size:0.75rem;">Cap assessed value growth at 3.0%/yr (OR Measure 50)</span>
+              </label>
             </div>
             <div class="row">
               <div class="row-label">
@@ -1932,7 +2046,7 @@ canvas { max-height: 270px; }
                 </div>
               </div>
               <input type="range" id="renoCost" min="0" max="100000" step="1000" value="10000">
-              <p class="row-hint">Buyer's immediate repairs, appliances, or furnishing budget. Treated as sunk upfront cash (increases renter's opportunity cost pool).</p>
+              <p class="row-hint">Buyer's immediate repairs, capital improvements, or furnishing budget. Added to upfront cash &amp; adjusted cost basis at sale.</p>
             </div>
             <div class="row">
               <div class="row-label">
@@ -2055,7 +2169,7 @@ canvas { max-height: 270px; }
                   </div>
                 </div>
                 <input type="range" id="rentalPct" min="10" max="50" step="5" value="25">
-                <p class="row-hint">Prorates Schedule E expenses, 27.5-yr depreciation, passive loss carryforwards, and Section 121 exclusion at sale.</p>
+                <p class="row-hint">Prorates Schedule E expenses, 27.5-yr depreciation, passive loss carryforwards, and Section 121 / 1250 recapture at sale.</p>
               </div>
               <div class="row">
                 <div class="row-label">
@@ -2085,12 +2199,12 @@ canvas { max-height: 270px; }
           </div>
         </div>
 
-        <!-- Accordion 6: Tax Estimates -->
+        <!-- Accordion 6: Tax Estimates & Jurisdiction -->
         <div class="accordion" id="acc-taxes">
           <button class="acc-header" onclick="toggleAcc('acc-taxes')">
-            <span class="acc-title">🧾 Tax Estimates (Fed + OR + Local)</span>
+            <span class="acc-title" id="accTaxesTitle">🧾 Tax Estimates &amp; Jurisdiction</span>
             <div class="acc-right">
-              <span class="acc-summary" id="sum-taxes">On · $150,000</span>
+              <span class="acc-summary" id="sum-taxes">OR+MultCo · $150,000</span>
               <span class="acc-arrow">▶</span>
             </div>
           </button>
@@ -2098,14 +2212,47 @@ canvas { max-height: 270px; }
             <label class="tax-toggle-row">
               <input type="checkbox" id="taxToggle" checked>
               <div class="tog-track"></div>
-              <span class="tog-label">Include Federal, OR &amp; MultCo taxes</span>
+              <span class="tog-label" id="taxToggleLabel">Include income, property &amp; capital gains tax impacts</span>
             </label>
             <div class="toggle-body open" id="taxBody">
               <div class="row">
+                <div class="row-label"><span class="name">Tax jurisdiction mode</span></div>
+                <div class="filing-btns">
+                  <button type="button" id="btnScopeOR" class="active" onclick="setTaxScope('or_mult')">🌲 OR + MultCo</button>
+                  <button type="button" id="btnScopeFed" onclick="setTaxScope('fed_only')">🇺🇸 Fed Only</button>
+                  <button type="button" id="btnScopeCustom" onclick="setTaxScope('custom_state')">🗺️ Custom State</button>
+                </div>
+              </div>
+
+              <!-- Sub-toggle for Multnomah / Metro local taxes (visible when taxScope === 'or_mult') -->
+              <div id="localTaxRow" style="margin-bottom:8px;">
+                <label class="tax-toggle-row">
+                  <input type="checkbox" id="localTaxToggle" checked onchange="clearActivePreset(); calc();">
+                  <div class="tog-track"></div>
+                  <span class="tog-label" style="font-size:0.75rem;">Include Metro SHS (1%) &amp; Multnomah PFA (1.5%–3%)</span>
+                </label>
+              </div>
+
+              <!-- Custom State Marginal Rate slider (visible when taxScope === 'custom_state') -->
+              <div class="row" id="customStateRow" style="display:none;">
+                <div class="row-label">
+                  <span class="name">Custom state marginal income tax rate</span>
+                  <div class="val-controls">
+                    <div class="num-input-wrap">
+                      <input type="text" inputmode="decimal" class="num-input" id="n-customStateRate">
+                      <span class="unit">%</span>
+                    </div>
+                  </div>
+                </div>
+                <input type="range" id="customStateRate" min="0.00" max="13.30" step="0.25" value="5.00">
+                <p class="row-hint">Set 0% for TX/WA/FL/NV, ~4.5%–6% for moderate states, or 9%–13.3% for CA/NY/NJ.</p>
+              </div>
+
+              <div class="row">
                 <div class="row-label"><span class="name">Filing status</span></div>
                 <div class="filing-btns">
-                  <button id="btnSingle" class="active" onclick="setFiling(false)">Single</button>
-                  <button id="btnMFJ" onclick="setFiling(true)">Married Filing Jointly</button>
+                  <button type="button" id="btnSingle" class="active" onclick="setFiling(false)">Single</button>
+                  <button type="button" id="btnMFJ" onclick="setFiling(true)">Married Filing Jointly</button>
                 </div>
               </div>
               <div class="row">
@@ -2119,16 +2266,21 @@ canvas { max-height: 270px; }
                   </div>
                 </div>
                 <input type="range" id="income" min="50000" max="750000" step="5000" value="150000">
+                <label class="tax-toggle-row" style="margin-top:6px;">
+                  <input type="checkbox" id="incomeGrowthToggle" checked onchange="clearActivePreset(); calc();">
+                  <div class="tog-track"></div>
+                  <span class="tog-label" style="font-size:0.75rem;">Grow household income annually with inflation</span>
+                </label>
               </div>
               <div class="rate-row">
                 <div class="rate-pill">Fed Ord: <strong id="rc-fedOrd">—</strong></div>
                 <div class="rate-pill">Fed LTCG: <strong id="rc-fedLTCG">—</strong></div>
                 <div class="rate-pill">NIIT: <strong id="rc-niit">—</strong></div>
-                <div class="rate-pill">OR Ord: <strong id="rc-orOrd">—</strong></div>
-                <div class="rate-pill">Metro SHS + Mult PFA: <strong id="rc-local">—</strong></div>
+                <div class="rate-pill" id="pill-orOrd"><span id="lbl-orOrd">OR Ord:</span> <strong id="rc-orOrd">—</strong></div>
+                <div class="rate-pill" id="pill-local"><span id="lbl-local">Metro SHS + Mult PFA:</span> <strong id="rc-local">—</strong></div>
               </div>
-              <p class="section-note" style="margin-bottom:0">
-                <strong>Modeled:</strong> (1) Schedule A incremental deduction above standard deduction (accounting for OR state income tax already filling the $10,000 federal SALT cap &amp; $750,000 mortgage debt cap); (2) Metro SHS (1% &gt;$125,000/$200,000) + Multnomah PFA (1.5%–3% &gt;$125,000/$200,000 &amp; $250,000/$400,000) + Federal NIIT (3.8% &gt;$200,000/$250,000); (3) Schedule E rental tax with $25,000 passive loss allowance &amp; IRC §469 carryforward; (4) Tax-deferred stock price appreciation (1.5% dividend yield taxed annually, capital gains taxed at exit).
+              <p class="section-note" id="taxModelNote" style="margin-bottom:0">
+                <strong>Modeled:</strong> (1) Schedule A incremental deduction above standard deduction (accounting for state income tax in the $10,000 federal SALT cap, $750,000 mortgage debt cap &amp; Year 1 discount points); (2) Metro SHS (1% &gt;$125,000/$200,000) + Multnomah PFA (1.5%–3% &gt;$125,000/$200,000 &amp; $250,000/$400,000) + Federal NIIT (3.8% &gt;$200,000/$250,000); (3) Schedule E rental tax with $25,000 passive loss allowance, IRC §469 carryforward &amp; §1250 recapture; (4) IRC §121 2-year primary residence rule &amp; tax-deferred stock compounding (1.5% dividend yield taxed annually, capital gains taxed at exit).
               </p>
             </div>
           </div>
@@ -2149,6 +2301,7 @@ canvas { max-height: 270px; }
         <div class="v-text">
           <strong id="verdictTitle">Calculating…</strong>
           <small id="verdictSub"></small>
+          <div class="verdict-sensitivity" id="verdictSensitivity"></div>
         </div>
       </div>
       <div class="verdict-pill" id="verdictModeBadge">💵 Shown in Today's Dollars</div>
@@ -2229,7 +2382,7 @@ canvas { max-height: 270px; }
         <span class="calc-hint-icon">∑</span>
         <div class="c-label">🧾 Mortgage &amp; Tax Deductions<span class="tax-badge benefit" id="badgeBenefit" style="display:none">Buyer Benefit</span></div>
         <div class="c-val" id="c-taxBenefit">—</div>
-        <div class="c-sub">incremental Fed + OR/Local Schedule A savings</div>
+        <div class="c-sub" id="c-taxBenefitSub">incremental Fed + State/Local Schedule A savings</div>
         <div class="calc-tooltip" id="tip-taxBenefit"></div>
       </div>
       <div class="card has-calc-tip" id="taxRentalTile" style="display:none">
@@ -2306,6 +2459,10 @@ canvas { max-height: 270px; }
             <tr class="wf-has-tip">
               <td>Buying closing costs <span class="wf-sigma">∑</span><div class="calc-tooltip" id="tip-wf-buyClose"></div></td>
               <td id="wf-buyClose">—</td>
+            </tr>
+            <tr class="wf-has-tip" id="wf-row-points" style="display:none">
+              <td>Mortgage discount points (rate buydown) <span class="wf-sigma">∑</span><div class="calc-tooltip" id="tip-wf-points"></div></td>
+              <td id="wf-points">—</td>
             </tr>
             <tr>
               <td>Upfront renovation / furnishing</td>
@@ -2443,12 +2600,21 @@ canvas { max-height: 270px; }
       </div>
     </div>
 
-    <p class="footnote">
-      ⚠️ <strong>Directional Analysis Only:</strong> Not financial or tax advice. Models Federal + Oregon + Metro SHS (1%) + Multnomah County PFA (1.5%–3%) + Federal NIIT (3.8%), Oregon Measure 50 (3% max annual assessed value growth), $10,000 SALT cap interaction with Oregon income tax, $750,000 mortgage interest debt limit, Schedule E rental taxation with IRC §469 passive loss rules, and tax-deferred equity index compounding (1.5% annual dividend yield + deferred LTCG at exit). Consult a CPA and financial advisor for your specific situation.
+    <p class="footnote" id="footnoteText">
+      ⚠️ <strong>Directional Analysis Only:</strong> Not financial or tax advice. Models Federal + State/Local income &amp; capital gains taxes, Federal NIIT (3.8%), $10,000 SALT cap interaction, $750,000 mortgage interest debt limit, Year 1 discount points, Schedule E rental taxation with IRC §469 passive loss rules &amp; §1250 depreciation recapture, IRC §121 2-year primary residence rule, and tax-deferred equity index compounding (1.5% annual dividend yield + deferred LTCG at exit). Consult a CPA and financial advisor for your specific situation.
     </p>
 
   </div><!-- /outputs -->
 </div><!-- /layout -->
+
+<!-- Sticky Mobile Verdict Bar (visible on tablet/mobile screens <= 980px) -->
+<div class="mobile-sticky-verdict" id="mobileStickyVerdict">
+  <div class="msv-left">
+    <span class="msv-title" id="msvTitle">Calculating…</span>
+    <span class="msv-sub" id="msvSub"></span>
+  </div>
+  <button type="button" class="msv-btn" onclick="document.getElementById('verdict').scrollIntoView({behavior:'smooth'})">Jump to Results ↓</button>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -2460,6 +2626,8 @@ let currentTheme = 'fintech';
 let realDollars  = true;      // true = Today's Dollars (inflation-adjusted), false = Nominal
 let filingMFJ    = false;     // false = Single, true = Married Filing Jointly
 let moChartMode  = 'stacked'; // 'stacked' = Stacked bars by year, 'line' = Net monthly lines by year
+let taxScope     = 'or_mult'; // 'or_mult' = OR + MultCo/Metro, 'fed_only' = US Federal Only, 'custom_state' = Fed + Custom State
+let refiTermMode = 30;        // 30, 20, 15, or 'rem' (Remaining Term)
 let lastSim      = null;
 
 const themeChartPalettes = {
@@ -2504,6 +2672,57 @@ function setAppTheme(themeName) {
     $('themeSelect').value = currentTheme;
   }
   updateAllSliderFills();
+  calc();
+}
+
+function setTaxScope(scope, skipPropCapAuto) {
+  const validScopes = ['or_mult', 'fed_only', 'custom_state'];
+  taxScope = validScopes.includes(scope) ? scope : 'or_mult';
+
+  if ($('taxScopeSelect') && $('taxScopeSelect').value !== taxScope) {
+    $('taxScopeSelect').value = taxScope;
+  }
+  if ($('btnScopeOR'))     $('btnScopeOR').classList.toggle('active', taxScope === 'or_mult');
+  if ($('btnScopeFed'))    $('btnScopeFed').classList.toggle('active', taxScope === 'fed_only');
+  if ($('btnScopeCustom')) $('btnScopeCustom').classList.toggle('active', taxScope === 'custom_state');
+
+  if ($('localTaxRow'))    $('localTaxRow').style.display    = taxScope === 'or_mult' ? '' : 'none';
+  if ($('customStateRow')) $('customStateRow').style.display = taxScope === 'custom_state' ? '' : 'none';
+
+  // Auto-sync Oregon Measure 50 3% property tax cap unless caller asked to preserve it
+  if (!skipPropCapAuto && $('propTaxCapToggle')) {
+    $('propTaxCapToggle').checked = (taxScope === 'or_mult');
+  }
+
+  // Update dynamic header subtitle & preset title
+  if ($('headerSubtitle')) {
+    if (taxScope === 'or_mult') {
+      const localOn = $('localTaxToggle') ? $('localTaxToggle').checked : true;
+      $('headerSubtitle').textContent = localOn
+        ? 'Calibrated for Multnomah County / Portland, OR'
+        : 'Calibrated for Oregon (Statewide · Local MultCo/Metro Off)';
+    } else if (taxScope === 'fed_only') {
+      $('headerSubtitle').textContent = 'US Federal Tax Mode · Nationwide Buy vs. Rent Analysis';
+    } else {
+      $('headerSubtitle').textContent = `Federal + Custom State (${g('customStateRate').toFixed(2)}%) · Nationwide Analysis`;
+    }
+  }
+  if ($('presetsHeaderTitle')) {
+    $('presetsHeaderTitle').textContent = taxScope === 'or_mult'
+      ? '⚡ Portland Area Scenarios'
+      : '⚡ US Household Scenarios';
+  }
+
+  calc();
+}
+
+function setRefiTermMode(mode) {
+  refiTermMode = (mode === 'rem') ? 'rem' : (parseInt(mode, 10) || 30);
+  if ($('btnRefi30'))  $('btnRefi30').classList.toggle('active', refiTermMode === 30);
+  if ($('btnRefi20'))  $('btnRefi20').classList.toggle('active', refiTermMode === 20);
+  if ($('btnRefi15'))  $('btnRefi15').classList.toggle('active', refiTermMode === 15);
+  if ($('btnRefiRem')) $('btnRefiRem').classList.toggle('active', refiTermMode === 'rem');
+  clearActivePreset();
   calc();
 }
 
@@ -2595,34 +2814,36 @@ function buildTooltipHTML(title, rows, totalRow, note, extraSection) {
 // TWO-WAY BINDING, COMMA FORMATTING & FILLED SLIDER TRACKS
 // ═══════════════════════════════════════════════════════════════
 const inputMeta = {
-  horizon:        { decimals: 0 },
-  homePrice:      { decimals: 0 },
-  downPct:        { decimals: 0 },
-  mortgageRate:   { decimals: 2 },
-  rent:           { decimals: 0 },
-  appreciation:   { decimals: 2 },
-  opportunity:    { decimals: 2 },
-  inflation:      { decimals: 1 },
-  loanTerm:       { decimals: 0 },
-  pmiRate:        { decimals: 2 },
-  refiRate:       { decimals: 2 },
-  refiYear:       { decimals: 0 },
-  refiCostPct:    { decimals: 2 },
-  propTax:        { decimals: 2 },
-  homeIns:        { decimals: 2 },
-  maintenance:    { decimals: 2 },
-  hoa:            { decimals: 0 },
-  renoCost:       { decimals: 0 },
-  buyClosure:     { decimals: 2 },
-  sellClosure:    { decimals: 2 },
-  moving:         { decimals: 0 },
-  rentIncrease:   { decimals: 2 },
-  renterMoveFreq: { decimals: 0 },
-  rentalIncome:   { decimals: 0 },
-  rentalPct:      { decimals: 0 },
-  vacancy:        { decimals: 0 },
-  propMgmt:       { decimals: 0 },
-  income:         { decimals: 0 }
+  horizon:         { decimals: 0 },
+  homePrice:       { decimals: 0 },
+  downPct:         { decimals: 0 },
+  mortgageRate:    { decimals: 2 },
+  rent:            { decimals: 0 },
+  appreciation:    { decimals: 2 },
+  opportunity:     { decimals: 2 },
+  inflation:       { decimals: 1 },
+  loanTerm:        { decimals: 0 },
+  loanPoints:      { decimals: 2 },
+  pmiRate:         { decimals: 2 },
+  refiRate:        { decimals: 2 },
+  refiYear:        { decimals: 0 },
+  refiCostPct:     { decimals: 2 },
+  propTax:         { decimals: 2 },
+  homeIns:         { decimals: 2 },
+  maintenance:     { decimals: 2 },
+  hoa:             { decimals: 0 },
+  renoCost:        { decimals: 0 },
+  buyClosure:      { decimals: 2 },
+  sellClosure:     { decimals: 2 },
+  moving:          { decimals: 0 },
+  rentIncrease:    { decimals: 2 },
+  renterMoveFreq:  { decimals: 0 },
+  rentalIncome:    { decimals: 0 },
+  rentalPct:       { decimals: 0 },
+  vacancy:         { decimals: 0 },
+  propMgmt:        { decimals: 0 },
+  income:          { decimals: 0 },
+  customStateRate: { decimals: 2 }
 };
 
 const inputIds = Object.keys(inputMeta);
@@ -2753,48 +2974,48 @@ inputIds.forEach(id => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// PORTLAND SCENARIO PRESETS
+// SCENARIO PRESETS
 // ═══════════════════════════════════════════════════════════════
 const presets = {
   default: {
     horizon: 10, homePrice: 600000, downPct: 15, mortgageRate: 6.50, rent: 2800,
     appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, homeIns: 0.35, maintenance: 1.00, hoa: 0,
     renoCost: 10000, buyClosure: 2.75, sellClosure: 6.50, moving: 3000,
     rentIncrease: 2.50, renterMoveFreq: 0,
     rentalToggle: false, rentalIncome: 1750, rentalPct: 25, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 150000
+    taxToggle: true, mfj: false, income: 150000, incomeGrowthToggle: true
   },
   low: {
     horizon: 10, homePrice: 425000, downPct: 10, mortgageRate: 6.50, rent: 1950,
     appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.55, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.55, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, homeIns: 0.35, maintenance: 1.00, hoa: 150,
     renoCost: 5000, buyClosure: 2.75, sellClosure: 6.50, moving: 2000,
     rentIncrease: 2.50, renterMoveFreq: 0,
     rentalToggle: false, rentalIncome: 1200, rentalPct: 25, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 85000
+    taxToggle: true, mfj: false, income: 85000, incomeGrowthToggle: true
   },
   high: {
     horizon: 10, homePrice: 1100000, downPct: 20, mortgageRate: 6.50, rent: 4600,
     appreciation: 3.50, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.15, homeIns: 0.35, maintenance: 1.00, hoa: 0,
     renoCost: 25000, buyClosure: 2.50, sellClosure: 6.00, moving: 5000,
     rentIncrease: 2.75, renterMoveFreq: 0,
     rentalToggle: false, rentalIncome: 2200, rentalPct: 25, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: true, income: 375000
+    taxToggle: true, mfj: true, income: 375000, incomeGrowthToggle: true
   },
   hack: {
     horizon: 10, homePrice: 675000, downPct: 15, mortgageRate: 6.50, rent: 2800,
     appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, homeIns: 0.35, maintenance: 1.10, hoa: 0,
     renoCost: 15000, buyClosure: 2.75, sellClosure: 6.50, moving: 3000,
     rentIncrease: 2.50, renterMoveFreq: 0,
     rentalToggle: true, rentalIncome: 1750, rentalPct: 30, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 150000
+    taxToggle: true, mfj: false, income: 150000, incomeGrowthToggle: true
   }
 };
 
@@ -2818,9 +3039,20 @@ function applyPreset(name) {
   $('refiToggle').checked   = !!p.refiToggle;
   $('rentalToggle').checked = !!p.rentalToggle;
   $('taxToggle').checked    = !!p.taxToggle;
+  if ($('incomeGrowthToggle') && p.incomeGrowthToggle !== undefined) {
+    $('incomeGrowthToggle').checked = !!p.incomeGrowthToggle;
+  }
   $('refiBody').classList.toggle('open', !!p.refiToggle);
   $('rentalBody').classList.toggle('open', !!p.rentalToggle);
   $('taxBody').classList.toggle('open', !!p.taxToggle);
+
+  if (p.refiTermMode !== undefined) {
+    refiTermMode = p.refiTermMode;
+    if ($('btnRefi30'))  $('btnRefi30').classList.toggle('active', refiTermMode === 30);
+    if ($('btnRefi20'))  $('btnRefi20').classList.toggle('active', refiTermMode === 20);
+    if ($('btnRefi15'))  $('btnRefi15').classList.toggle('active', refiTermMode === 15);
+    if ($('btnRefiRem')) $('btnRefiRem').classList.toggle('active', refiTermMode === 'rem');
+  }
 
   filingMFJ = !!p.mfj;
   $('btnSingle').classList.toggle('active', !filingMFJ);
@@ -2832,7 +3064,7 @@ function applyPreset(name) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// TAX ENGINE: FEDERAL + OREGON + METRO SHS + MULTNOMAH PFA + NIIT
+// TAX ENGINE: 3-WAY MODE (OR+MULTCO / US FEDERAL ONLY / CUSTOM STATE)
 // ═══════════════════════════════════════════════════════════════
 function fedMarginalRate(taxableInc, mfj) {
   const b = mfj
@@ -2872,26 +3104,57 @@ function orProgressiveTax(orTaxableInc, mfj) {
 }
 
 function getTaxProfile(grossIncome, mfj) {
-  const fedStd = mfj ? 30000 : 15000;
-  const orStd  = mfj ? 5495  : 2745;
+  const fedStd     = mfj ? 30000 : 15000;
   const fedTaxable = Math.max(0, grossIncome - fedStd);
-  const orTaxable  = Math.max(0, grossIncome - orStd);
-
-  const fedMarg = fedMarginalRate(fedTaxable, mfj);
-  const fedLTCG = fedLTCGRate(fedTaxable, mfj);
-  const orMarg  = orMarginalRate(orTaxable, mfj);
-  const orBaseTax = orProgressiveTax(orTaxable, mfj);
+  const fedMarg    = fedMarginalRate(fedTaxable, mfj);
+  const fedLTCG    = fedLTCGRate(fedTaxable, mfj);
 
   const niitThresh = mfj ? 250000 : 200000;
-  const niit = grossIncome > niitThresh ? 0.038 : 0;
+  const niit       = grossIncome > niitThresh ? 0.038 : 0;
+  const cgExclude  = mfj ? 500000 : 250000;
 
-  const localThresh1 = mfj ? 200000 : 125000;
-  const localThresh2 = mfj ? 400000 : 250000;
-  const metroSHS = orTaxable > localThresh1 ? 0.01 : 0;
-  const multPFA  = orTaxable > localThresh2 ? 0.03 : (orTaxable > localThresh1 ? 0.015 : 0);
-  const localRate = metroSHS + multPFA;
+  let orStd = 0, orTaxable = 0, orMarg = 0, orBaseTax = 0;
+  let metroSHS = 0, multPFA = 0, localRate = 0;
+  let stateLabel = 'OR + Local';
 
-  const cgExclude = mfj ? 500000 : 250000;
+  if (taxScope === 'fed_only') {
+    orStd      = 0;
+    orTaxable  = 0;
+    orMarg     = 0;
+    orBaseTax  = 0;
+    metroSHS   = 0;
+    multPFA    = 0;
+    localRate  = 0;
+    stateLabel = 'Federal Only (0% State)';
+  } else if (taxScope === 'custom_state') {
+    const customRate = ($('customStateRate') ? g('customStateRate') : 5.0) / 100;
+    orStd      = fedStd;
+    orTaxable  = Math.max(0, grossIncome - orStd);
+    orMarg     = customRate;
+    orBaseTax  = orTaxable * customRate;
+    metroSHS   = 0;
+    multPFA    = 0;
+    localRate  = 0;
+    stateLabel = 'Custom State';
+  } else {
+    // 'or_mult' (Oregon + optional Metro SHS & Multnomah PFA)
+    orStd     = mfj ? 5495 : 2745;
+    orTaxable = Math.max(0, grossIncome - orStd);
+    orMarg    = orMarginalRate(orTaxable, mfj);
+    orBaseTax = orProgressiveTax(orTaxable, mfj);
+
+    const includeLocal = $('localTaxToggle') ? $('localTaxToggle').checked : true;
+    const localThresh1 = mfj ? 200000 : 125000;
+    const localThresh2 = mfj ? 400000 : 250000;
+    if (includeLocal) {
+      metroSHS  = orTaxable > localThresh1 ? 0.01 : 0;
+      multPFA   = orTaxable > localThresh2 ? 0.03 : (orTaxable > localThresh1 ? 0.015 : 0);
+      localRate = metroSHS + multPFA;
+      stateLabel = 'OR + Local';
+    } else {
+      stateLabel = 'Oregon (State Only)';
+    }
+  }
 
   const capGainsCombined = fedLTCG + niit + orMarg + localRate;
   const orLocalCombined  = orMarg + localRate;
@@ -2900,7 +3163,8 @@ function getTaxProfile(grossIncome, mfj) {
     fedStd, orStd, fedTaxable, orTaxable,
     fedMarg, fedLTCG, orMarg, orBaseTax,
     niit, metroSHS, multPFA, localRate,
-    cgExclude, capGainsCombined, orLocalCombined
+    cgExclude, capGainsCombined, orLocalCombined,
+    stateLabel
   };
 }
 
@@ -2999,35 +3263,37 @@ function initCharts() {
 // ═══════════════════════════════════════════════════════════════
 // SIMULATION ENGINE
 // ═══════════════════════════════════════════════════════════════
-function runSimulation(enableTaxes) {
-  const horizon        = g('horizon');
-  const homePrice      = g('homePrice');
-  const downPct        = g('downPct')      / 100;
-  const mortgageRate   = g('mortgageRate') / 100;
-  const loanTerm       = g('loanTerm');
-  const pmiRate        = g('pmiRate')      / 100;
+function runSimulation(enableTaxes, overrides) {
+  const horizon        = Math.max(1, overrides?.horizon ?? (g('horizon') || 10));
+  const homePrice      = overrides?.homePrice    ?? g('homePrice');
+  const downPct        = (overrides?.downPct     ?? g('downPct'))      / 100;
+  const mortgageRate   = (overrides?.mortgageRate ?? g('mortgageRate')) / 100;
+  const loanTerm       = Math.max(1, overrides?.loanTerm ?? (g('loanTerm') || 30));
+  const loanPointsPct  = (overrides?.loanPoints  ?? ($('loanPoints') ? g('loanPoints') : 0)) / 100;
+  const pmiRate        = (overrides?.pmiRate     ?? g('pmiRate'))      / 100;
   const refiOn         = $('refiToggle').checked;
-  const refiRate       = g('refiRate')     / 100;
-  const refiYear       = g('refiYear');
-  const refiCostPct    = g('refiCostPct')  / 100;
+  const refiRate       = (overrides?.refiRate    ?? g('refiRate'))     / 100;
+  const refiYear       = overrides?.refiYear     ?? g('refiYear');
+  const refiCostPct    = (overrides?.refiCostPct ?? g('refiCostPct'))  / 100;
 
-  const propTax        = g('propTax')      / 100;
-  const homeIns        = g('homeIns')      / 100;
-  const maintenance    = g('maintenance')  / 100;
-  const hoa            = g('hoa');
+  const propTax        = (overrides?.propTax     ?? g('propTax'))      / 100;
+  const propTaxCapOn   = $('propTaxCapToggle') ? $('propTaxCapToggle').checked : (taxScope === 'or_mult');
+  const homeIns        = (overrides?.homeIns     ?? g('homeIns'))      / 100;
+  const maintenance    = (overrides?.maintenance ?? g('maintenance'))  / 100;
+  const hoa            = overrides?.hoa          ?? g('hoa');
 
-  const renoCost       = g('renoCost');
-  const buyClosure     = g('buyClosure')   / 100;
-  const sellClosure    = g('sellClosure')  / 100;
-  const moving         = g('moving');
+  const renoCost       = overrides?.renoCost     ?? g('renoCost');
+  const buyClosure     = (overrides?.buyClosure  ?? g('buyClosure'))   / 100;
+  const sellClosure    = (overrides?.sellClosure ?? g('sellClosure'))  / 100;
+  const moving         = overrides?.moving       ?? g('moving');
 
-  const appreciation   = g('appreciation') / 100;
-  const opportunity    = g('opportunity')  / 100;
-  const inflation      = g('inflation')    / 100;
+  const appreciation   = (overrides?.appreciation ?? g('appreciation')) / 100;
+  const opportunity    = (overrides?.opportunity  ?? g('opportunity'))  / 100;
+  const inflation      = (overrides?.inflation    ?? g('inflation'))    / 100;
 
-  const rent           = g('rent');
-  const rentIncrease   = g('rentIncrease') / 100;
-  const renterMoveFreq = g('renterMoveFreq');
+  const rent           = overrides?.rent         ?? g('rent');
+  const rentIncrease   = (overrides?.rentIncrease ?? g('rentIncrease')) / 100;
+  const renterMoveFreq = overrides?.renterMoveFreq ?? g('renterMoveFreq');
 
   const rentalOn       = $('rentalToggle').checked;
   const rentalIncome   = rentalOn ? g('rentalIncome') : 0;
@@ -3036,36 +3302,43 @@ function runSimulation(enableTaxes) {
   const propMgmt       = g('propMgmt')     / 100;
 
   const income         = g('income');
+  const growIncome     = $('incomeGrowthToggle') ? $('incomeGrowthToggle').checked : true;
   const tp             = getTaxProfile(income, filingMFJ);
 
   const downPayment     = homePrice * downPct;
   const closingCost     = homePrice * buyClosure;
-  const totalUpfrontBuy = downPayment + closingCost + renoCost + moving;
+  const loanAmount      = homePrice * (1 - downPct);
+  const pointsCost      = loanAmount * loanPointsPct;
+  // Each 1.00% point buys down the initial mortgage rate by 0.25%
+  const pointsRateCut   = (loanPointsPct * 100) * 0.0025;
+  const effectiveInitRate = Math.max(0, mortgageRate - pointsRateCut);
+
+  const totalUpfrontBuy = downPayment + closingCost + pointsCost + renoCost + moving;
 
   const securityDeposit  = rent;
   const renterInitInvest = Math.max(0, totalUpfrontBuy - moving - securityDeposit);
   const buyerInitInvest  = Math.max(0, (moving + securityDeposit) - totalUpfrontBuy);
 
-  const loanAmount  = homePrice * (1 - downPct);
-  let activeRate    = mortgageRate;
+  let activeRate    = effectiveInitRate;
   let monthlyPI     = pmt(loanAmount, activeRate, loanTerm);
   const usePMI      = downPct < 0.20;
   const netRentalMo = rentalIncome * (1 - vacancy) * (1 - propMgmt);
 
-  const divYield       = Math.min(opportunity, 0.015);
-  const priceApprec    = Math.max(0, opportunity - divYield);
-  const annualDivTax   = enableTaxes ? divYield * tp.capGainsCombined : 0;
-  const annualPortRate = priceApprec + (divYield - annualDivTax);
+  const divYield    = Math.min(opportunity, 0.015);
+  const priceApprec = Math.max(0, opportunity - divYield);
 
   let renterPortVal      = renterInitInvest;
   let renterPortBasis    = renterInitInvest;
   let renterMonthlyRaw   = 0;
   let renterReinvestDivs = 0;
+  let renterMonthlyDisp  = 0;
+  let renterDivsDisp     = 0;
 
   let buyerPortVal       = buyerInitInvest;
   let buyerPortBasis     = buyerInitInvest;
   let buyerMonthlyRaw    = 0;
   let buyerReinvestDivs  = 0;
+  let buyerMonthlyDisp   = 0;
 
   let renterPortGross    = renterInitInvest;
   let buyerPortGross     = buyerInitInvest;
@@ -3078,6 +3351,9 @@ function runSimulation(enableTaxes) {
   let currentGrossRent = rentalIncome;
   let currentNetRental = netRentalMo;
 
+  // Nominal cumulative trackers (for loan payoff & nominal reference)
+  let cumPrincipalNom = 0, cumRentPaidNom = 0;
+  // Display cumulative trackers (discounted year-by-year by df_y when realDollars === true)
   let cumPI = 0, cumPrincipal = 0, cumInterest = 0, cumRefiCost = 0;
   let cumPTax = 0, cumIns = 0, cumMaint = 0, cumHOA = 0, cumPMI = 0, cumOtherOwn = 0;
   let cumRentalInc = 0, cumSchedABenefit = 0, cumSchedETax = 0;
@@ -3087,6 +3363,8 @@ function runSimulation(enableTaxes) {
 
   let m1 = {};
   let refiNewPI = null;
+  let refiTermUsed = 30;
+  let lastYearTp = tp;
 
   const series = {
     labels: [],
@@ -3101,13 +3379,26 @@ function runSimulation(enableTaxes) {
   let lastYearState = null;
 
   for (let y = 1; y <= horizon; y++) {
+    // Year-specific household income & tax profile (statutory thresholds remain unindexed in nominal $)
+    const yearIncome = growIncome ? income * Math.pow(1 + inflation, y - 1) : income;
+    const yTp        = getTaxProfile(yearIncome, filingMFJ);
+    lastYearTp       = yTp;
+
+    const annualDivTax   = enableTaxes ? divYield * yTp.capGainsCombined : 0;
+    const annualPortRate = priceApprec + (divYield - annualDivTax);
+
+    // Year-specific real-dollar discount factor for cash flows occurring in Year y
+    const df_y  = realDollars ? (1 / Math.pow(1 + inflation, y)) : 1;
+    const dfMo  = realDollars ? (1 / Math.pow(1 + inflation, y - 1)) : 1;
+
     let yearRefiCost = 0;
     if (refiOn && y === refiYear && loanBal > 0) {
       yearRefiCost = loanBal * refiCostPct;
       activeRate   = refiRate;
-      monthlyPI    = pmt(loanBal, activeRate, 30);
+      refiTermUsed = (refiTermMode === 'rem') ? Math.max(1, loanTerm - refiYear + 1) : Number(refiTermMode);
+      monthlyPI    = pmt(loanBal, activeRate, refiTermUsed);
       refiNewPI    = monthlyPI;
-      cumRefiCost += yearRefiCost;
+      cumRefiCost += yearRefiCost * df_y;
     }
 
     let yearPI = 0, yearPrincipal = 0, yearInterest = 0;
@@ -3153,23 +3444,27 @@ function runSimulation(enableTaxes) {
       const avgLoanBal   = (startYearLoanBal + loanBal) / 2;
       const fedDebtCapRatio = avgLoanBal > 0 ? Math.min(1, 750000 / avgLoanBal) : 1;
 
-      const personalInt  = yearInterest * personalPct;
+      // Upfront mortgage discount points paid at purchase are deductible as mortgage interest in Year 1
+      const deductibleIntPool = yearInterest + (y === 1 ? pointsCost : 0);
+      const personalInt  = deductibleIntPool * personalPct;
       const fedDeductInt = personalInt * fedDebtCapRatio;
       const personalPTax = yearPTax * personalPct;
 
-      const baselineFedSalt = Math.min(tp.orBaseTax, 10000);
-      const baselineFedDed  = Math.max(tp.fedStd, baselineFedSalt);
-      const buyerFedSalt    = Math.min(tp.orBaseTax + personalPTax, 10000);
-      const buyerFedDed     = Math.max(tp.fedStd, fedDeductInt + buyerFedSalt);
-      const fedBenefit      = Math.max(0, buyerFedDed - baselineFedDed) * tp.fedMarg;
+      const baselineFedSalt = Math.min(yTp.orBaseTax, 10000);
+      const baselineFedDed  = Math.max(yTp.fedStd, baselineFedSalt);
+      const buyerFedSalt    = Math.min(yTp.orBaseTax + personalPTax, 10000);
+      const buyerFedDed     = Math.max(yTp.fedStd, fedDeductInt + buyerFedSalt);
+      const fedBenefit      = Math.max(0, buyerFedDed - baselineFedDed) * yTp.fedMarg;
 
       const orItemized      = personalInt + personalPTax;
-      const orBenefit       = Math.max(0, orItemized - tp.orStd) * tp.orLocalCombined;
+      const orBenefit       = (yTp.orLocalCombined > 0)
+        ? Math.max(0, orItemized - yTp.orStd) * yTp.orLocalCombined
+        : 0;
 
       yearTaxSavings    = fedBenefit + orBenefit;
-      cumFedBenefit    += fedBenefit;
-      cumOrBenefit     += orBenefit;
-      cumSchedABenefit += yearTaxSavings;
+      cumFedBenefit    += fedBenefit * df_y;
+      cumOrBenefit     += orBenefit * df_y;
+      cumSchedABenefit += yearTaxSavings * df_y;
 
       if (rentalOn && rentalIncome > 0 && rentalPct > 0) {
         const grossRentalAnnual = currentGrossRent * (1 - vacancy) * 12;
@@ -3184,29 +3479,32 @@ function runSimulation(enableTaxes) {
           const offset = Math.min(suspendedPassiveLoss, netSchedE);
           suspendedPassiveLoss -= offset;
           const taxableSchedE = netSchedE - offset;
-          yearRentalTax = taxableSchedE * (tp.fedMarg + tp.niit + tp.orLocalCombined);
+          yearRentalTax = taxableSchedE * (yTp.fedMarg + yTp.niit + yTp.orLocalCombined);
         } else {
           const loss = Math.abs(netSchedE);
-          const maxAllowance = income <= 100000 ? 25000 : Math.max(0, 25000 - (income - 100000) * 0.5);
+          // Statutory $100k–$150k passive loss phaseout is unindexed in nominal dollars
+          const maxAllowance = yearIncome <= 100000 ? 25000 : Math.max(0, 25000 - (yearIncome - 100000) * 0.5);
           const deductibleLoss = Math.min(loss, maxAllowance);
           const disallowedLoss = loss - deductibleLoss;
           suspendedPassiveLoss += disallowedLoss;
-          yearRentalTax = -deductibleLoss * (tp.fedMarg + tp.orLocalCombined);
+          yearRentalTax = -deductibleLoss * (yTp.fedMarg + yTp.orLocalCombined);
         }
-        cumSchedETax += yearRentalTax;
+        cumSchedETax += yearRentalTax * df_y;
       }
     }
 
-    cumPI        += yearPI;
-    cumPrincipal += yearPrincipal;
-    cumInterest  += yearInterest;
-    cumPTax      += yearPTax;
-    cumIns       += yearIns;
-    cumMaint     += yearMaint;
-    cumHOA       += yearHOA;
-    cumPMI       += yearPMI;
-    cumOtherOwn  += (yearIns + yearMaint + yearHOA + yearPMI);
-    cumRentalInc += yearRental;
+    // Accumulate nominal trackers & year-by-year discounted display trackers
+    cumPrincipalNom += yearPrincipal;
+    cumPI           += yearPI * df_y;
+    cumPrincipal    += yearPrincipal * df_y;
+    cumInterest     += yearInterest * df_y;
+    cumPTax         += yearPTax * df_y;
+    cumIns          += yearIns * df_y;
+    cumMaint        += yearMaint * df_y;
+    cumHOA          += yearHOA * df_y;
+    cumPMI          += yearPMI * df_y;
+    cumOtherOwn     += (yearIns + yearMaint + yearHOA + yearPMI) * df_y;
+    cumRentalInc    += yearRental * df_y;
 
     const annualNetOwn = yearPI + yearRefiCost + yearPTax + yearIns + yearMaint + yearHOA + yearPMI
       - yearRental - yearTaxSavings + yearRentalTax;
@@ -3217,20 +3515,22 @@ function runSimulation(enableTaxes) {
     const yearRentOnly  = currentRent * 12;
     const annualNetRent = yearRentOnly + repeatMoveCost;
 
-    cumRentPaid  += yearRentOnly;
-    cumRentOther += repeatMoveCost;
+    cumRentPaidNom += yearRentOnly;
+    cumRentPaid    += yearRentOnly * df_y;
+    cumRentOther   += repeatMoveCost * df_y;
 
     const prevRenterVal = renterPortVal;
-    renterPortVal   *= (1 + annualPortRate);
-    const rDivReinv  = prevRenterVal * (divYield - annualDivTax);
-    renterPortBasis += rDivReinv;
+    renterPortVal      *= (1 + annualPortRate);
+    const rDivReinv     = prevRenterVal * (divYield - annualDivTax);
+    renterPortBasis    += rDivReinv;
     renterReinvestDivs += rDivReinv;
+    renterDivsDisp     += rDivReinv * df_y;
 
     const prevBuyerVal = buyerPortVal;
-    buyerPortVal    *= (1 + annualPortRate);
-    const bDivReinv  = prevBuyerVal * (divYield - annualDivTax);
-    buyerPortBasis  += bDivReinv;
-    buyerReinvestDivs += bDivReinv;
+    buyerPortVal       *= (1 + annualPortRate);
+    const bDivReinv     = prevBuyerVal * (divYield - annualDivTax);
+    buyerPortBasis     += bDivReinv;
+    buyerReinvestDivs  += bDivReinv;
 
     renterPortGross *= (1 + opportunity);
     buyerPortGross  *= (1 + opportunity);
@@ -3242,46 +3542,57 @@ function runSimulation(enableTaxes) {
       renterPortVal    += cfDelta * (1 + halfYrRate);
       renterPortBasis  += cfDelta;
       renterMonthlyRaw += cfDelta;
+      renterMonthlyDisp += cfDelta * df_y;
       renterPortGross  += cfDelta * (1 + halfYrGross);
     } else {
       const save = Math.abs(cfDelta);
-      buyerPortVal    += save * (1 + halfYrRate);
-      buyerPortBasis  += save;
-      buyerMonthlyRaw += save;
-      buyerPortGross  += save * (1 + halfYrGross);
+      buyerPortVal     += save * (1 + halfYrRate);
+      buyerPortBasis   += save;
+      buyerMonthlyRaw  += save;
+      buyerMonthlyDisp += save * df_y;
+      buyerPortGross   += save * (1 + halfYrGross);
     }
 
     homeVal     *= (1 + appreciation);
-    assessedVal *= (1 + Math.min(appreciation, 0.03));
+    assessedVal *= (1 + (propTaxCapOn ? Math.min(appreciation, 0.03) : appreciation));
     currentRent *= (1 + rentIncrease);
     currentHOA  *= (1 + inflation);
     currentGrossRent *= (1 + rentIncrease);
     currentNetRental *= (1 + rentIncrease);
 
     const sellCost = homeVal * sellClosure;
-    const netGainBeforeTax = Math.max(0, homeVal - homePrice - sellCost + closingCost);
+    // Fix 1: Adjusted cost basis includes purchase price + buying closing costs + upfront points + capital improvements (renoCost)
+    const adjustedPurchaseBasis = homePrice + closingCost + pointsCost + renoCost;
+    const netGainBeforeTax = Math.max(0, homeVal - sellCost - adjustedPurchaseBasis);
+    // Fix 2: IRC §121 primary residence capital gains exclusion requires >= 2 years of ownership/use
+    const effectiveCgExclude = y >= 2 ? yTp.cgExclude : 0;
+
     let cgTax = 0;
     if (enableTaxes) {
       if (rentalOn && rentalIncome > 0 && rentalPct > 0) {
-        const rentalGain   = Math.max(0, netGainBeforeTax * rentalPct - suspendedPassiveLoss);
-        const personalGain = netGainBeforeTax * (1 - rentalPct);
-        const recaptureAmt = Math.min(cumDepreciation, rentalGain);
-        const recaptureTax = recaptureAmt * (0.25 + tp.niit + tp.orLocalCombined);
-        const remRentalGain = Math.max(0, rentalGain - recaptureAmt);
-        const rentalGainTax = remRentalGain * tp.capGainsCombined;
-        const taxablePersonal = Math.max(0, personalGain - tp.cgExclude);
-        const personalGainTax = taxablePersonal * tp.capGainsCombined;
+        // Fix 3: IRC §1250 depreciation reduces basis on the rental portion dollar-for-dollar, increasing realized gain at sale
+        const rentalGainBeforeDepr    = netGainBeforeTax * rentalPct;
+        const totalRentalGainWithDepr = Math.max(0, rentalGainBeforeDepr + cumDepreciation - suspendedPassiveLoss);
+        const recaptureAmt            = Math.min(cumDepreciation, totalRentalGainWithDepr);
+        const fedRecaptureRate        = Math.min(0.25, yTp.fedMarg);
+        const recaptureTax            = recaptureAmt * (fedRecaptureRate + yTp.niit + yTp.orLocalCombined);
+        const remRentalGain           = Math.max(0, totalRentalGainWithDepr - recaptureAmt);
+        const rentalGainTax           = remRentalGain * yTp.capGainsCombined;
+
+        const personalGain    = Math.max(0, netGainBeforeTax * (1 - rentalPct));
+        const taxablePersonal = Math.max(0, personalGain - effectiveCgExclude);
+        const personalGainTax = taxablePersonal * yTp.capGainsCombined;
         cgTax = recaptureTax + rentalGainTax + personalGainTax;
       } else {
-        const taxableGain = Math.max(0, netGainBeforeTax - tp.cgExclude);
-        cgTax = taxableGain * tp.capGainsCombined;
+        const taxableGain = Math.max(0, netGainBeforeTax - effectiveCgExclude);
+        cgTax = taxableGain * yTp.capGainsCombined;
       }
     }
 
     const netEquity = homeVal - loanBal - sellCost - cgTax;
 
-    const renterExitTax = enableTaxes ? Math.max(0, renterPortVal - renterPortBasis) * tp.capGainsCombined : 0;
-    const buyerExitTax  = enableTaxes ? Math.max(0, buyerPortVal  - buyerPortBasis)  * tp.capGainsCombined : 0;
+    const renterExitTax = enableTaxes ? Math.max(0, renterPortVal - renterPortBasis) * yTp.capGainsCombined : 0;
+    const buyerExitTax  = enableTaxes ? Math.max(0, buyerPortVal  - buyerPortBasis)  * yTp.capGainsCombined : 0;
 
     const buyerAfterTaxPort  = buyerPortVal  - buyerExitTax;
     const renterAfterTaxPort = renterPortVal - renterExitTax;
@@ -3289,8 +3600,7 @@ function runSimulation(enableTaxes) {
     const buyNW_nom  = netEquity + buyerAfterTaxPort;
     const rentNW_nom = renterAfterTaxPort + securityDeposit;
 
-    const df   = realDollars ? (1 / Math.pow(1 + inflation, y)) : 1;
-    const dfMo = realDollars ? (1 / Math.pow(1 + inflation, y - 1)) : 1;
+    const df = df_y;
 
     series.labels.push('Yr ' + y);
     series.buyNW.push(Math.round(buyNW_nom * df));
@@ -3321,19 +3631,19 @@ function runSimulation(enableTaxes) {
     if (y === horizon) {
       lastYearState = {
         df,
-        loanAmount, downPayment, closingCost, renoCost, moving, totalUpfrontBuy,
+        loanAmount, downPayment, closingCost, pointsCost, pointsRateCut, effectiveInitRate, renoCost, moving, totalUpfrontBuy,
         securityDeposit, renterInitInvest,
-        cumPI, cumPrincipal, cumInterest, cumRefiCost,
+        cumPI, cumPrincipal, cumPrincipalNom, cumInterest, cumRefiCost,
         cumPTax, cumIns, cumMaint, cumHOA, cumPMI, cumOtherOwn,
         cumRentalInc,
         cumFedBenefit, cumOrBenefit, cumSchedABenefit, cumSchedETax,
-        cumRentPaid, cumRentOther, repeatMoveCount,
-        homeVal, assessedVal, loanBal, sellCost, cgTax, netEquity,
-        buyerPortVal, buyerPortBasis, buyerMonthlyRaw, buyerReinvestDivs, buyerExitTax, buyerAfterTaxPort,
-        renterPortVal, renterPortBasis, renterMonthlyRaw, renterReinvestDivs, renterExitTax, renterAfterTaxPort,
+        cumRentPaid, cumRentPaidNom, cumRentOther, repeatMoveCount,
+        homeVal, assessedVal, loanBal, sellCost, cgTax, netEquity, effectiveCgExclude,
+        buyerPortVal, buyerPortBasis, buyerMonthlyRaw, buyerMonthlyDisp, buyerReinvestDivs, buyerExitTax, buyerAfterTaxPort,
+        renterPortVal, renterPortBasis, renterMonthlyRaw, renterMonthlyDisp, renterReinvestDivs, renterDivsDisp, renterExitTax, renterAfterTaxPort,
         renterPortGross, buyerPortGross,
         buyNW_nom, rentNW_nom,
-        refiNewPI
+        refiNewPI, refiTermUsed, propTaxCapOn, lastYearTp
       };
     }
   }
@@ -3341,6 +3651,69 @@ function runSimulation(enableTaxes) {
   return {
     horizon, tp, m1, series, breakEvenYear, breakEvenState, lastYearState
   };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SENSITIVITY SOLVER ("WHAT FLIPS THE VERDICT")
+// ═══════════════════════════════════════════════════════════════
+function computeFlipSensitivity(taxOn, baseNwDiff) {
+  const evalDiff = (ovr) => {
+    const res = runSimulation(taxOn, ovr).lastYearState;
+    return res.buyNW_nom - res.rentNW_nom;
+  };
+
+  // 1. Solve for break-even appreciation rate (% between -2.0% and 12.0%)
+  let appFlip = null;
+  let loA = -2.0, hiA = 12.0;
+  const dLoA = evalDiff({ appreciation: loA });
+  const dHiA = evalDiff({ appreciation: hiA });
+  if ((dLoA <= 0 && dHiA >= 0) || (dLoA >= 0 && dHiA <= 0)) {
+    for (let i = 0; i < 14; i++) {
+      const mid = (loA + hiA) / 2;
+      const dMid = evalDiff({ appreciation: mid });
+      if ((dMid >= 0) === (dHiA >= 0)) hiA = mid;
+      else loA = mid;
+    }
+    appFlip = (loA + hiA) / 2;
+  }
+
+  // 2. Solve for break-even comparable monthly rent ($ between $300 and $18,000)
+  let rentFlip = null;
+  let loR = 300, hiR = 18000;
+  const dLoR = evalDiff({ rent: loR });
+  const dHiR = evalDiff({ rent: hiR });
+  if ((dLoR <= 0 && dHiR >= 0) || (dLoR >= 0 && dHiR <= 0)) {
+    for (let i = 0; i < 14; i++) {
+      const mid = (loR + hiR) / 2;
+      const dMid = evalDiff({ rent: mid });
+      if ((dMid >= 0) === (dHiR >= 0)) hiR = mid;
+      else loR = mid;
+    }
+    rentFlip = Math.round((loR + hiR) / 2);
+  }
+
+  const parts = [];
+  if (baseNwDiff >= 0) {
+    if (appFlip !== null && appFlip >= -1.9 && appFlip <= 11.9) {
+      parts.push(`home appreciation below <strong>${appFlip.toFixed(2)}%/yr</strong> (vs. ${g('appreciation').toFixed(2)}% now)`);
+    }
+    if (rentFlip !== null && rentFlip > 310 && rentFlip < 17900) {
+      parts.push(`comparable rent below <strong>${fmtD(rentFlip)}/mo</strong> (vs. ${fmtD(g('rent'))}/mo now)`);
+    }
+    return parts.length
+      ? `⚖️ <strong>To flip verdict to Renting:</strong> Requires ${parts.join(' <em>or</em> ')}.`
+      : `⚖️ <strong>Strong Buying Lead:</strong> Buying remains ahead across standard rent and appreciation ranges over this horizon.`;
+  } else {
+    if (appFlip !== null && appFlip >= -1.9 && appFlip <= 11.9) {
+      parts.push(`home appreciation of at least <strong>${appFlip.toFixed(2)}%/yr</strong> (vs. ${g('appreciation').toFixed(2)}% now)`);
+    }
+    if (rentFlip !== null && rentFlip > 310 && rentFlip < 17900) {
+      parts.push(`comparable rent of at least <strong>${fmtD(rentFlip)}/mo</strong> (vs. ${fmtD(g('rent'))}/mo now)`);
+    }
+    return parts.length
+      ? `⚖️ <strong>To flip verdict to Buying:</strong> Requires ${parts.join(' <em>or</em> ')}.`
+      : `⚖️ <strong>Strong Renting Lead:</strong> Renting + investing remains ahead even at 12%/yr appreciation over this short horizon.`;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3360,13 +3733,23 @@ function calc() {
   const df = s.df;
 
   // ── 1. Update dual chips (% -> $) and accordion summary badges (all with commas)
-  const homePrice = g('homePrice');
-  const downPct   = g('downPct') / 100;
-  const loanAmt   = homePrice * (1 - downPct);
+  const homePrice  = g('homePrice');
+  const downPct    = g('downPct') / 100;
+  const loanAmt    = homePrice * (1 - downPct);
+  const pointsPct  = $('loanPoints') ? g('loanPoints') : 0;
+  const pointsCut  = pointsPct * 0.25;
+  const effInitRt  = Math.max(0, g('mortgageRate') - pointsCut);
+  const previewRefiTerm = (refiTermMode === 'rem') ? Math.max(1, g('loanTerm') - g('refiYear') + 1) : Number(refiTermMode);
+
   $('d-downPct').textContent      = fmtD(homePrice * downPct);
-  $('d-mortgageRate').textContent = fmtD(pmt(loanAmt, g('mortgageRate') / 100, g('loanTerm'))) + '/mo P&I';
+  $('d-mortgageRate').textContent = fmtD(pmt(loanAmt, effInitRt / 100, g('loanTerm'))) + '/mo P&I' + (pointsPct > 0 ? ` (${effInitRt.toFixed(2)}% eff)` : '');
+  if ($('d-loanPoints')) {
+    $('d-loanPoints').textContent = pointsPct > 0
+      ? `${fmtD(s.pointsCost)} (−${pointsCut.toFixed(2)}% rate)`
+      : '$0 (0.00% cut)';
+  }
   $('d-pmiRate').textContent      = downPct < 0.20 ? fmtD(loanAmt * (g('pmiRate') / 100) / 12) + '/mo' : '$0 (≥20% down)';
-  $('d-refiRate').textContent     = fmtD(pmt(loanAmt * 0.95, g('refiRate') / 100, 30)) + '/mo est.';
+  $('d-refiRate').textContent     = fmtD(pmt(loanAmt * 0.95, g('refiRate') / 100, previewRefiTerm)) + `/mo (${previewRefiTerm}yr)`;
   $('d-refiCostPct').textContent  = fmtD(loanAmt * 0.95 * (g('refiCostPct') / 100)) + ' est.';
   $('d-propTax').textContent      = fmtD(homePrice * (g('propTax') / 100) / 12) + '/mo';
   $('d-homeIns').textContent      = fmtD(homePrice * (g('homeIns') / 100) / 12) + '/mo';
@@ -3377,24 +3760,52 @@ function calc() {
   const rFreq = g('renterMoveFreq');
   $('d-renterMoveFreq').textContent = rFreq === 0 ? 'Initial only' : 'Every ' + rFreq + ' yrs';
 
+  // Keep header subtitle updated if customStateRate or localTaxToggle changed
+  if ($('headerSubtitle')) {
+    if (taxScope === 'or_mult') {
+      const localOn = $('localTaxToggle') ? $('localTaxToggle').checked : true;
+      $('headerSubtitle').textContent = localOn
+        ? 'Calibrated for Multnomah County / Portland, OR'
+        : 'Calibrated for Oregon (Statewide · Local MultCo/Metro Off)';
+    } else if (taxScope === 'fed_only') {
+      $('headerSubtitle').textContent = 'US Federal Tax Mode · Nationwide Buy vs. Rent Analysis';
+    } else {
+      $('headerSubtitle').textContent = `Federal + Custom State (${g('customStateRate').toFixed(2)}%) · Nationwide Analysis`;
+    }
+  }
+
   // Accordion header summaries (with commas)
-  $('sum-financing').textContent   = g('loanTerm') + 'yr · ' + (refiOn ? 'Refi Yr ' + g('refiYear') + ' @ ' + g('refiRate').toFixed(2) + '%' : 'Refi Off');
+  const ptsTag = pointsPct > 0 ? ` · ${pointsPct.toFixed(2)}pt` : '';
+  const refiTermLabel = refiTermMode === 'rem' ? 'RemTerm' : `${refiTermMode}yr`;
+  $('sum-financing').textContent   = g('loanTerm') + 'yr' + ptsTag + ' · ' + (refiOn ? `Refi Yr ${g('refiYear')} @ ${g('refiRate').toFixed(2)}% (${refiTermLabel})` : 'Refi Off');
   const ongoingPct = (g('propTax') + g('homeIns') + g('maintenance')).toFixed(2) + '%/yr' + (g('hoa') > 0 ? ' + ' + fmtD(g('hoa')) + '/mo' : '');
   $('sum-ongoing').textContent     = ongoingPct;
   $('sum-transaction').textContent = fmtD(g('renoCost')) + ' reno · ' + g('buyClosure').toFixed(2) + '%/' + g('sellClosure').toFixed(2) + '%';
   $('sum-rentalAlt').textContent   = g('rentIncrease').toFixed(2) + '%/yr · 1mo dep';
   $('sum-houseHack').textContent   = rentalOn ? fmtD(g('rentalIncome')) + '/mo (' + g('rentalPct') + '%)' : 'Off';
-  $('sum-taxes').textContent       = taxOn ? ('On · ' + fmtD(g('income')) + (filingMFJ ? ' MFJ' : ' Sgl')) : 'Off';
 
-  // Tax rate pills
+  const scopeShort = taxScope === 'or_mult'
+    ? (($('localTaxToggle') && !$('localTaxToggle').checked) ? 'OR' : 'OR+MultCo')
+    : (taxScope === 'fed_only' ? 'Fed Only' : `Fed+${g('customStateRate').toFixed(1)}%`);
+  $('sum-taxes').textContent       = taxOn ? (`${scopeShort} · ` + fmtD(g('income')) + (filingMFJ ? ' MFJ' : ' Sgl')) : 'Off';
+
+  // Tax rate pills & jurisdiction-aware labels
   const tp = sim.tp;
   $('rc-fedOrd').textContent  = (tp.fedMarg * 100).toFixed(0) + '%';
   $('rc-fedLTCG').textContent = (tp.fedLTCG * 100).toFixed(0) + '%';
   $('rc-niit').textContent    = (tp.niit * 100).toFixed(1) + '%';
-  $('rc-orOrd').textContent   = (tp.orMarg * 100).toFixed(2) + '%';
-  $('rc-local').textContent   = (tp.localRate * 100).toFixed(1) + '%';
+  if ($('pill-orOrd')) {
+    $('pill-orOrd').style.display = taxScope === 'fed_only' ? 'none' : '';
+    if ($('lbl-orOrd')) $('lbl-orOrd').textContent = taxScope === 'custom_state' ? 'State Ord:' : 'OR Ord:';
+    $('rc-orOrd').textContent = (tp.orMarg * 100).toFixed(2) + '%';
+  }
+  if ($('pill-local')) {
+    const showLocalPill = taxScope === 'or_mult' && (!$('localTaxToggle') || $('localTaxToggle').checked);
+    $('pill-local').style.display = showLocalPill ? '' : 'none';
+    $('rc-local').textContent = (tp.localRate * 100).toFixed(1) + '%';
+  }
 
-  // ── 2. Header & Verdict Banner
+  // ── 2. Header, Verdict Banner, Sensitivity Line & Sticky Mobile Bar
   const horizon = sim.horizon;
   $('horizonBadge').textContent = horizon + '-Year Analysis';
 
@@ -3421,6 +3832,19 @@ function calc() {
     vEl.style.borderLeft  = '4px solid var(--rent)';
   }
 
+  if ($('verdictSensitivity')) {
+    $('verdictSensitivity').innerHTML = computeFlipSensitivity(taxOn, s.buyNW_nom - s.rentNW_nom);
+  }
+
+  if ($('msvTitle') && $('msvSub')) {
+    const beTxt = sim.breakEvenYear ? `Break-even: Yr ${sim.breakEvenYear}` : `No crossover in ${horizon}y`;
+    $('msvTitle').textContent = nwDiff >= 0
+      ? `🏠 Buying leads by +${fmtD(absDiff)} (${horizon}y)`
+      : `🏡 Renting leads by +${fmtD(absDiff)} (${horizon}y)`;
+    $('msvTitle').style.color = nwDiff >= 0 ? 'var(--buy)' : 'var(--rent)';
+    $('msvSub').textContent   = `Buy ${fmtD(finalBuyNW)} vs. Rent ${fmtD(finalRentNW)} · ${beTxt}`;
+  }
+
   // ── 3. Summary Cards + Hover Calculation Breakdown Tooltips
   const m1 = sim.m1;
   const moOwnGross = m1.pi + m1.tax + m1.ins + m1.maint + m1.hoaV + m1.pmi;
@@ -3429,11 +3853,11 @@ function calc() {
 
   $('c-monthlyOwn').textContent = fmtD(moOwnNet);
   $('c-monthlyOwnSub').textContent = refiOn && s.refiNewPI
-    ? `Yr 1 · P&I drops to ${fmtD(s.refiNewPI)}/mo in Yr ${g('refiYear')}`
+    ? `Yr 1 · P&I drops to ${fmtD(s.refiNewPI)}/mo in Yr ${g('refiYear')} (${s.refiTermUsed}yr)`
     : 'Year 1 · net out-of-pocket';
 
   const moOwnRows = [
-    ['Mortgage P&I', fmtD(m1.pi)],
+    [`Mortgage P&I (${s.effectiveInitRate ? (s.effectiveInitRate * 100).toFixed(2) + '%' : g('mortgageRate') + '%'})`, fmtD(m1.pi)],
     ['Property Tax (Yr 1)', fmtD(m1.tax)],
     ['Home Insurance', fmtD(m1.ins)],
     ['Maintenance & Repairs', fmtD(m1.maint)]
@@ -3507,14 +3931,20 @@ function calc() {
 
   $('c-upfront').textContent    = fmtD(s.totalUpfrontBuy);
   $('c-upfrontSub').textContent = `vs. ${fmtD(s.moving + s.securityDeposit)} renter move + deposit`;
+  const upfrontTipRows = [
+    [`Down Payment (${g('downPct')}%)`, fmtD(s.downPayment)],
+    [`Buying Closing Costs (${g('buyClosure')}%)`, fmtD(s.closingCost)]
+  ];
+  if (s.pointsCost > 0) {
+    upfrontTipRows.push([`Discount Points (${pointsPct.toFixed(2)}% of loan)`, fmtD(s.pointsCost)]);
+  }
+  upfrontTipRows.push(
+    ['Renovation / Furnishing', fmtD(s.renoCost)],
+    ['Initial Moving Costs', fmtD(s.moving)]
+  );
   $('tip-upfront').innerHTML = buildTooltipHTML(
     'Day 1 Upfront Cash Calculation',
-    [
-      [`Down Payment (${g('downPct')}%)`, fmtD(s.downPayment)],
-      [`Buying Closing Costs (${g('buyClosure')}%)`, fmtD(s.closingCost)],
-      ['Renovation / Furnishing', fmtD(s.renoCost)],
-      ['Initial Moving Costs', fmtD(s.moving)]
-    ],
+    upfrontTipRows,
     ['= Buyer Upfront Cash', fmtD(s.totalUpfrontBuy)],
     `Renter pays ${fmtD(s.moving)} moving + locks ${fmtD(s.securityDeposit)} security deposit, and invests the remaining ${fmtD(s.renterInitInvest)} in stocks on Day 1.`
   );
@@ -3568,8 +3998,9 @@ function calc() {
   const taxTileRow = $('taxTileRow');
   if (taxOn) {
     taxTileRow.classList.add('visible');
-    const schedASavings = Math.round(s.cumSchedABenefit * df);
-    const schedEAndSale = Math.round((s.cumSchedETax + s.cgTax) * df);
+    // s.cumSchedABenefit and s.cumSchedETax are already discounted year-by-year by df_y
+    const schedASavings = Math.round(s.cumSchedABenefit);
+    const schedEAndSale = Math.round(s.cumSchedETax + s.cgTax * df);
 
     const preTaxGap  = Math.round((simNoTax.lastYearState.buyNW_nom - simNoTax.lastYearState.rentNW_nom) * df);
     const postTaxGap = Math.round((s.buyNW_nom - s.rentNW_nom) * df);
@@ -3579,14 +4010,25 @@ function calc() {
     $('taxBenefitCard').classList.toggle('tax-benefit', schedASavings > 0);
     $('badgeBenefit').style.display = schedASavings > 0 ? '' : 'none';
     $('c-taxBenefit').textContent   = fmtD(schedASavings);
-    $('tip-taxBenefit').innerHTML   = buildTooltipHTML(
+    if ($('c-taxBenefitSub')) {
+      $('c-taxBenefitSub').textContent = taxScope === 'fed_only'
+        ? 'incremental Federal Schedule A savings'
+        : `incremental Fed + ${tp.stateLabel} Schedule A savings`;
+    }
+
+    const dedTipRows = [
+      [`Federal Itemized Savings (${(tp.fedMarg * 100).toFixed(0)}% Yr 1 marg)`, fmtD(s.cumFedBenefit)]
+    ];
+    if (taxScope !== 'fed_only') {
+      dedTipRows.push([`${tp.stateLabel} Itemized Savings (${(tp.orLocalCombined * 100).toFixed(2)}%)`, fmtD(s.cumOrBenefit)]);
+    }
+    $('tip-taxBenefit').innerHTML = buildTooltipHTML(
       '1. Mortgage & Property Tax Deductions',
-      [
-        [`Federal Itemized Savings (${(tp.fedMarg * 100).toFixed(0)}% marg)`, fmtD(s.cumFedBenefit * df)],
-        [`OR + Local Itemized Savings (${(tp.orLocalCombined * 100).toFixed(2)}%)`, fmtD(s.cumOrBenefit * df)]
-      ],
+      dedTipRows,
       ['= Cumulative Deduction Savings', fmtD(schedASavings)],
-      `Direct income tax reductions from deducting mortgage interest & property taxes above the standard deduction (accounting for ${fmtD(tp.orBaseTax)}/yr baseline OR tax in the $10,000 SALT cap).`
+      taxScope === 'fed_only'
+        ? `With $0 baseline state income tax, property taxes up to $10,000/yr + mortgage interest (on up to $750k debt) + Year 1 points reduce Federal taxable income above the ${fmtD(tp.fedStd)} standard deduction.`
+        : `Direct income tax reductions from deducting mortgage interest, Year 1 discount points & property taxes above the standard deduction (accounting for ${fmtD(tp.orBaseTax)}/yr Yr 1 state tax in the $10,000 SALT cap).`
     );
 
     const rentalTile = $('taxRentalTile');
@@ -3602,11 +4044,11 @@ function calc() {
       $('tip-rentalTax').innerHTML   = buildTooltipHTML(
         '2. Schedule E & Home Sale Taxes',
         [
-          ['Cumulative Schedule E Rental Tax', fmtD(s.cumSchedETax * df)],
-          ['Home Sale Cap Gains & Recapture Tax', fmtD(s.cgTax * df)]
+          ['Cumulative Schedule E Rental Tax', fmtD(s.cumSchedETax)],
+          ['Home Sale Cap Gains & §1250 Recapture Tax', fmtD(s.cgTax * df)]
         ],
         ['= Combined Tax Cost / (Shield)', fmtD(schedEAndSale)],
-        'Includes 27.5-yr structure depreciation, $25,000 passive loss allowance, and 25% + OR/Local recapture at sale.'
+        'Includes 27.5-yr structure depreciation, $25,000 passive loss allowance, IRC §121 2-yr ownership rule, and §1250 depreciation recapture at sale.'
       );
     } else {
       rentalTile.style.display = 'none';
@@ -3618,7 +4060,7 @@ function calc() {
     $('taxDragCard').classList.toggle('tax-benefit', stockTaxDragFavorsBuyer > 0);
     $('badgeDrag').style.display = stockTaxDragFavorsBuyer > 0 ? '' : 'none';
     $('c-taxDrag').textContent   = fmtD(Math.max(0, stockTaxDragFavorsBuyer));
-    $('c-taxDragSub').textContent = `reduces renter's stock portfolio (${(tp.capGainsCombined * 100).toFixed(1)}% tax rate)`;
+    $('c-taxDragSub').textContent = `reduces renter's stock portfolio (${(s.lastYearTp.capGainsCombined * 100).toFixed(1)}% exit rate)`;
     $('tip-taxDrag').innerHTML   = buildTooltipHTML(
       'Stock Portfolio Tax Drag (Favors Buying)',
       [
@@ -3626,7 +4068,7 @@ function calc() {
         ['+ Investment Compounding on Annual Tax Savings', fmtSignedD(taxFlowCompounding)]
       ],
       ['= Total Stock Portfolio Drag Effect', fmtD(stockTaxDragFavorsBuyer)],
-      `Why this favors buying: Renter invests upfront cash + monthly savings in a taxable stock account taxed at ${(tp.capGainsCombined * 100).toFixed(2)}%, whereas primary home appreciation up to ${fmtD(tp.cgExclude)} is tax-free.`
+      `Why this favors buying: Renter invests upfront cash + monthly savings in a taxable stock account taxed at ${(s.lastYearTp.capGainsCombined * 100).toFixed(2)}%, whereas primary home appreciation up to ${fmtD(s.effectiveCgExclude)} is tax-free.`
     );
 
     $('c-taxNet').textContent    = fmtSignedD(netTaxImpactOnBuying);
@@ -3647,7 +4089,7 @@ function calc() {
       'How the Tax Tiles Sum to Net Tax Impact',
       netTaxRows,
       ['= Net Tax Impact on Buying', fmtSignedD(netTaxImpactOnBuying)],
-      `What this shows: Enabling taxes shifts the final Buy vs. Rent net worth comparison by ${fmtSignedD(netTaxImpactOnBuying)} in favor of buying — because the Buyer gets tax-free home appreciation (up to ${fmtD(tp.cgExclude)}) plus mortgage/property tax deductions, while the Renter pays capital gains & dividend taxes on their stock portfolio.`,
+      `What this shows: Enabling taxes shifts the final Buy vs. Rent net worth comparison by ${fmtSignedD(netTaxImpactOnBuying)} in favor of buying — because the Buyer gets tax-free home appreciation (up to ${fmtD(s.effectiveCgExclude)}) plus mortgage/property tax deductions, while the Renter pays capital gains & dividend taxes on their stock portfolio.`,
       {
         title: 'Impact on Final Buy vs. Rent Net Worth Gap',
         rows: [
@@ -3664,10 +4106,26 @@ function calc() {
   // ── 5. Waterfall Table Update + Hover Tooltips
   $('wfTitle').textContent = `Detailed Financial Waterfall — ${horizon}-Year Breakdown`;
   document.querySelectorAll('.wf-yr').forEach(el => { el.textContent = horizon; });
-  const dModeText = realDollars ? `Discounted to Today's Dollars at ${g('inflation')}%/yr inflation.` : 'Shown in Nominal Future Dollars.';
+  const dModeText = realDollars
+    ? `Each year's cash flow is discounted to Today's Dollars at ${g('inflation')}%/yr inflation.`
+    : 'Shown in Nominal Future Dollars.';
 
   $('wf-down').textContent          = fmtD(s.downPayment);
   $('wf-buyClose').textContent      = fmtD(s.closingCost);
+  if ($('wf-row-points')) {
+    $('wf-row-points').style.display = s.pointsCost > 0 ? '' : 'none';
+    $('wf-points').textContent       = fmtD(s.pointsCost);
+    $('tip-wf-points').innerHTML     = buildTooltipHTML(
+      'Mortgage Discount Points (Rate Buydown)',
+      [
+        ['Original Loan Amount', fmtD(s.loanAmount)],
+        ['× Discount Points Purchased', pointsPct.toFixed(2) + '%'],
+        ['Initial Rate Reduction (−0.25% per point)', `−${pointsCut.toFixed(2)}% (to ${effInitRt.toFixed(2)}%)`]
+      ],
+      ['= Upfront Points Cost (Day 1)', fmtD(s.pointsCost)],
+      'Deductible as prepaid mortgage interest in Year 1 on Schedule A (subject to $750k debt limit) and added to adjusted cost basis.'
+    );
+  }
   $('wf-reno').textContent          = fmtD(s.renoCost);
   $('wf-buyMove').textContent       = fmtD(s.moving);
   $('wf-buyUpfrontTot').textContent = fmtD(s.totalUpfrontBuy);
@@ -3688,63 +4146,69 @@ function calc() {
       ['× Buying Closing Cost Rate', g('buyClosure').toFixed(2) + '%']
     ],
     ['= Buying Closing Costs', fmtD(s.closingCost)],
-    'Covers lender fees, title insurance, appraisal, and recording fees at purchase.'
+    'Covers lender fees, title insurance, appraisal, and recording fees at purchase. Added to adjusted cost basis at sale.'
   );
 
+  const wfUpfrontRows = [
+    ['Down Payment', fmtD(s.downPayment)],
+    ['+ Buying Closing Costs', fmtD(s.closingCost)]
+  ];
+  if (s.pointsCost > 0) wfUpfrontRows.push(['+ Mortgage Discount Points', fmtD(s.pointsCost)]);
+  wfUpfrontRows.push(
+    ['+ Upfront Renovation / Furnishing', fmtD(s.renoCost)],
+    ['+ Initial Moving Costs', fmtD(s.moving)]
+  );
   $('tip-wf-buyUpfrontTot').innerHTML = buildTooltipHTML(
     'Total Buyer Upfront Cash Required',
-    [
-      ['Down Payment', fmtD(s.downPayment)],
-      ['+ Buying Closing Costs', fmtD(s.closingCost)],
-      ['+ Upfront Renovation / Furnishing', fmtD(s.renoCost)],
-      ['+ Initial Moving Costs', fmtD(s.moving)]
-    ],
+    wfUpfrontRows,
     ['= Total Buyer Upfront Cash', fmtD(s.totalUpfrontBuy)]
   );
 
-  $('wf-pi').textContent       = fmtD((s.cumPI + s.cumRefiCost) * df);
-  $('wf-refiNote').textContent = s.cumRefiCost > 0 ? `(incl. ${fmtD(s.cumRefiCost * df)} refi)` : '';
-  $('wf-ptax').textContent     = fmtD(s.cumPTax * df);
-  $('wf-otherOwn').textContent = fmtD(s.cumOtherOwn * df);
+  // Section 2 cumulative flows are already discounted year-by-year by df_y
+  $('wf-pi').textContent       = fmtD(s.cumPI + s.cumRefiCost);
+  $('wf-refiNote').textContent = s.cumRefiCost > 0 ? `(incl. ${fmtD(s.cumRefiCost)} refi)` : '';
+  $('wf-ptax').textContent     = fmtD(s.cumPTax);
+  $('wf-otherOwn').textContent = fmtD(s.cumOtherOwn);
 
   const piTipRows = [
-    [`Cumulative Mortgage Interest (${horizon} yrs)`, fmtD(s.cumInterest * df)],
-    [`+ Cumulative Principal Paid (${horizon} yrs)`, fmtD(s.cumPrincipal * df)]
+    [`Cumulative Mortgage Interest (${horizon} yrs)`, fmtD(s.cumInterest)],
+    [`+ Cumulative Principal Paid (${horizon} yrs)`, fmtD(s.cumPrincipal)]
   ];
-  if (s.cumRefiCost > 0) piTipRows.push([`+ Yr ${g('refiYear')} Refinance Closing Costs`, fmtD(s.cumRefiCost * df)]);
+  if (s.cumRefiCost > 0) piTipRows.push([`+ Yr ${g('refiYear')} Refinance Closing Costs`, fmtD(s.cumRefiCost)]);
   $('tip-wf-pi').innerHTML = buildTooltipHTML(
     `Cumulative Mortgage P&I (${horizon} Years)`,
     piTipRows,
-    ['= Total Mortgage Payments', fmtD((s.cumPI + s.cumRefiCost) * df)],
+    ['= Total Mortgage Payments', fmtD(s.cumPI + s.cumRefiCost)],
     dModeText
   );
 
-  const effAssessedGrowth = Math.min(g('appreciation'), 3.0).toFixed(2);
+  const effAssessedGrowth = (s.propTaxCapOn ? Math.min(g('appreciation'), 3.0) : g('appreciation')).toFixed(2);
+  const capDesc = s.propTaxCapOn ? '3.0% Measure 50 cap ON' : 'Uncapped (tracks appreciation)';
   $('tip-wf-ptax').innerHTML = buildTooltipHTML(
     `Cumulative Property Taxes (${horizon} Years)`,
     [
       ['Year 1 Property Tax', fmtD(homePrice * (g('propTax') / 100))],
-      ['Assessed Value Growth Rate', `${effAssessedGrowth}%/yr (Measure 50 cap)`],
+      ['Assessed Value Growth Rate', `${effAssessedGrowth}%/yr (${capDesc})`],
       [`Year ${horizon} Assessed Value (Nominal)`, fmtD(s.assessedVal)]
     ],
-    [`= ${horizon}-Yr Property Taxes`, fmtD(s.cumPTax * df)],
-    `Oregon Measure 50 caps annual assessed value growth at 3.0%/yr. ${dModeText}`
+    [`= ${horizon}-Yr Property Taxes`, fmtD(s.cumPTax)],
+    dModeText
   );
 
   $('tip-wf-otherOwn').innerHTML = buildTooltipHTML(
     `Insurance, Maintenance, HOA & PMI (${horizon} Years)`,
     [
-      ['Homeowners Insurance', fmtD(s.cumIns * df)],
-      ['+ Maintenance & Repairs', fmtD(s.cumMaint * df)],
-      ['+ HOA Fees', fmtD(s.cumHOA * df)],
-      ['+ Private Mortgage Insurance (PMI)', fmtD(s.cumPMI * df)]
+      ['Homeowners Insurance', fmtD(s.cumIns)],
+      ['+ Maintenance & Repairs', fmtD(s.cumMaint)],
+      ['+ HOA Fees', fmtD(s.cumHOA)],
+      ['+ Private Mortgage Insurance (PMI)', fmtD(s.cumPMI)]
     ],
-    ['= Total Other Ownership Costs', fmtD(s.cumOtherOwn * df)],
+    ['= Total Other Ownership Costs', fmtD(s.cumOtherOwn)],
     dModeText
   );
 
   $('wf-row-rentalInc').style.display = rentalOn ? '' : 'none';
-  $('wf-rentalInc').textContent       = '−' + fmtD(s.cumRentalInc * df);
+  $('wf-rentalInc').textContent       = '−' + fmtD(s.cumRentalInc);
   if (rentalOn) {
     $('tip-wf-rentalInc').innerHTML = buildTooltipHTML(
       `Cumulative Net Rental Income (${horizon} Years)`,
@@ -3753,22 +4217,24 @@ function calc() {
         ['Less: Vacancy & Mgmt Fee', `−${g('vacancy')}% vac / −${g('propMgmt')}% mgmt`],
         ['Annual Escalation Rate', `${g('rentIncrease').toFixed(2)}%/yr`]
       ],
-      ['= Cumulative Net Rental Offset', '−' + fmtD(s.cumRentalInc * df)],
+      ['= Cumulative Net Rental Offset', '−' + fmtD(s.cumRentalInc)],
       dModeText
     );
   }
 
-  const netIncomeTaxEffect = (s.cumSchedABenefit - s.cumSchedETax) * df;
+  const netIncomeTaxEffect = s.cumSchedABenefit - s.cumSchedETax;
   $('wf-row-taxSav').style.display = taxOn ? '' : 'none';
   $('wf-taxSav').textContent       = (netIncomeTaxEffect >= 0 ? '−' : '+') + fmtD(Math.abs(netIncomeTaxEffect));
   $('wf-taxSav').className         = netIncomeTaxEffect >= 0 ? 'wf-pos' : 'wf-neg';
   if (taxOn) {
     const taxSavRows = [
-      ['Federal Schedule A Savings', '−' + fmtD(s.cumFedBenefit * df)],
-      ['OR + Local Schedule OR-A Savings', '−' + fmtD(s.cumOrBenefit * df)]
+      ['Federal Schedule A Savings', '−' + fmtD(s.cumFedBenefit)]
     ];
+    if (taxScope !== 'fed_only') {
+      taxSavRows.push([`${tp.stateLabel} Schedule A Savings`, '−' + fmtD(s.cumOrBenefit)]);
+    }
     if (rentalOn) {
-      taxSavRows.push(['Schedule E Rental Tax / (Shield)', fmtSignedD(s.cumSchedETax * df)]);
+      taxSavRows.push(['Schedule E Rental Tax / (Shield)', fmtSignedD(s.cumSchedETax)]);
     }
     $('tip-wf-taxSav').innerHTML = buildTooltipHTML(
       `Cumulative Income Tax Effect (${horizon} Years)`,
@@ -3778,14 +4244,14 @@ function calc() {
     );
   }
 
-  const buyOngoingNet = (s.cumPI + s.cumRefiCost + s.cumPTax + s.cumOtherOwn - s.cumRentalInc - s.cumSchedABenefit + s.cumSchedETax) * df;
+  const buyOngoingNet = s.cumPI + s.cumRefiCost + s.cumPTax + s.cumOtherOwn - s.cumRentalInc - s.cumSchedABenefit + s.cumSchedETax;
   $('wf-buyOngoingTot').textContent = fmtD(buyOngoingNet);
   const buyOngoingRows = [
-    ['Mortgage P&I Payments', fmtD((s.cumPI + s.cumRefiCost) * df)],
-    ['+ Property Taxes', fmtD(s.cumPTax * df)],
-    ['+ Insurance, Maintenance, HOA & PMI', fmtD(s.cumOtherOwn * df)]
+    ['Mortgage P&I Payments', fmtD(s.cumPI + s.cumRefiCost)],
+    ['+ Property Taxes', fmtD(s.cumPTax)],
+    ['+ Insurance, Maintenance, HOA & PMI', fmtD(s.cumOtherOwn)]
   ];
-  if (rentalOn) buyOngoingRows.push(['Less: Net Rental Income', '−' + fmtD(s.cumRentalInc * df)]);
+  if (rentalOn) buyOngoingRows.push(['Less: Net Rental Income', '−' + fmtD(s.cumRentalInc)]);
   if (taxOn)    buyOngoingRows.push(['Less: Net Income Tax Savings', (netIncomeTaxEffect >= 0 ? '−' : '+') + fmtD(Math.abs(netIncomeTaxEffect))]);
   $('tip-wf-buyOngoingTot').innerHTML = buildTooltipHTML(
     `Net Ongoing Ownership Out-of-Pocket (${horizon} Years)`,
@@ -3794,6 +4260,8 @@ function calc() {
     dModeText
   );
 
+  // Section 3: Terminal wealth at Year horizon (discounted by Year-horizon df)
+  const termModeText = realDollars ? `Discounted from Year-${horizon} nominal dollars at ${g('inflation')}%/yr inflation.` : 'Shown in Nominal Future Dollars.';
   $('wf-homeVal').textContent        = fmtD(s.homeVal * df);
   $('wf-loanBal').textContent        = '−' + fmtD(s.loanBal * df);
   $('wf-sellCost').textContent       = '−' + fmtD((s.sellCost + s.cgTax) * df);
@@ -3810,28 +4278,30 @@ function calc() {
       [`Nominal Value at Year ${horizon}`, fmtD(s.homeVal)]
     ],
     [`= Ending Home Value (${realDollars ? "Today's $" : "Nominal $"})`, fmtD(s.homeVal * df)],
-    dModeText
+    termModeText
   );
 
   $('tip-wf-loanBal').innerHTML = buildTooltipHTML(
     `Year ${horizon} Remaining Mortgage Payoff`,
     [
       ['Original Loan Amount', fmtD(s.loanAmount)],
-      [`Less: Principal Paid Over ${horizon} Years`, '−' + fmtD(s.cumPrincipal)],
+      [`Less: Nominal Principal Paid Over ${horizon} Years`, '−' + fmtD(s.cumPrincipalNom)],
       [`Nominal Remaining Balance (Yr ${horizon})`, fmtD(s.loanBal)]
     ],
     [`= Remaining Payoff (${realDollars ? "Today's $" : "Nominal $"})`, '−' + fmtD(s.loanBal * df)],
-    dModeText
+    termModeText
   );
 
   $('tip-wf-sellCost').innerHTML = buildTooltipHTML(
     `Year ${horizon} Selling Closing Costs & Sale Taxes`,
     [
       [`Selling Closing Costs (${g('sellClosure').toFixed(2)}% of sale price)`, '−' + fmtD(s.sellCost * df)],
-      ['Capital Gains & Depreciation Recapture Tax', '−' + fmtD(s.cgTax * df)]
+      ['Capital Gains & §1250 Depreciation Recapture Tax', '−' + fmtD(s.cgTax * df)]
     ],
     ['= Total Sale Transaction & Tax Costs', '−' + fmtD((s.sellCost + s.cgTax) * df)],
-    `Section 121 excludes up to ${fmtD(tp.cgExclude)} of personal-use capital gains.`
+    horizon >= 2
+      ? `IRC §121 excludes up to ${fmtD(s.effectiveCgExclude)} of personal-use gain above adjusted basis (${fmtD(homePrice + s.closingCost + s.pointsCost + s.renoCost)}).`
+      : `Held <2 years (${horizon} yr): IRC §121 primary residence exclusion ($0) does not apply.`
   );
 
   $('tip-wf-netEq').innerHTML = buildTooltipHTML(
@@ -3842,7 +4312,7 @@ function calc() {
       ['Less: Selling Closing Costs & Sale Taxes', '−' + fmtD((s.sellCost + s.cgTax) * df)]
     ],
     ['= Net Home Equity at Sale', fmtD(s.netEquity * df)],
-    dModeText
+    termModeText
   );
 
   $('tip-wf-buyPort').innerHTML = buildTooltipHTML(
@@ -3863,7 +4333,7 @@ function calc() {
       ["+ Buyer's Invested Monthly Savings (After Tax)", '+' + fmtD(s.buyerAfterTaxPort * df)]
     ],
     ['= Ending Net Worth · Buyer', fmtD(finalBuyNW)],
-    dModeText
+    termModeText
   );
 
   // Renter Waterfall + Hover Tooltips
@@ -3880,7 +4350,7 @@ function calc() {
       ['Less: 1-Month Security Deposit (Locked at 0%)', '−' + fmtD(s.securityDeposit)]
     ],
     ['= Upfront Cash Invested in Stocks', fmtD(s.renterInitInvest)],
-    'Because the Renter does not pay a down payment, closing costs, or renovation budget, this excess cash is invested in stocks on Day 1.'
+    'Because the Renter does not pay a down payment, closing costs, discount points, or renovation budget, this excess cash is invested in stocks on Day 1.'
   );
 
   $('tip-wf-rentUpfrontTot').innerHTML = buildTooltipHTML(
@@ -3893,18 +4363,18 @@ function calc() {
     ['= Same Starting Capital as Buyer', fmtD(s.moving + s.securityDeposit + s.renterInitInvest)]
   );
 
-  $('wf-rentPaid').textContent       = fmtD(s.cumRentPaid * df);
-  $('wf-rentOther').textContent      = fmtD(s.cumRentOther * df);
-  $('wf-rentOngoingTot').textContent = fmtD((s.cumRentPaid + s.cumRentOther) * df);
+  $('wf-rentPaid').textContent       = fmtD(s.cumRentPaid);
+  $('wf-rentOther').textContent      = fmtD(s.cumRentOther);
+  $('wf-rentOngoingTot').textContent = fmtD(s.cumRentPaid + s.cumRentOther);
 
   $('tip-wf-rentPaid').innerHTML = buildTooltipHTML(
     `Cumulative Rent Paid (${horizon} Years)`,
     [
       ['Year 1 Monthly Rent', fmtD(g('rent')) + '/mo (' + fmtD(g('rent') * 12) + '/yr)'],
       ['Annual Rent Escalation Rate', g('rentIncrease').toFixed(2) + '%/yr'],
-      [`Nominal Cumulative Rent (${horizon} yrs)`, fmtD(s.cumRentPaid)]
+      [`Nominal Cumulative Rent (${horizon} yrs)`, fmtD(s.cumRentPaidNom)]
     ],
-    [`= Cumulative Rent Paid (${realDollars ? "Today's $" : "Nominal $"})`, fmtD(s.cumRentPaid * df)],
+    [`= Cumulative Rent Paid (${realDollars ? "Today's $" : "Nominal $"})`, fmtD(s.cumRentPaid)],
     dModeText
   );
 
@@ -3915,29 +4385,29 @@ function calc() {
       ['Number of Repeat Moves in Horizon', String(s.repeatMoveCount)],
       ['Base Moving Cost (Inflated at ' + g('inflation') + '%/yr)', fmtD(s.moving)]
     ],
-    ['= Cumulative Repeat Moving Costs', fmtD(s.cumRentOther * df)],
+    ['= Cumulative Repeat Moving Costs', fmtD(s.cumRentOther)],
     dModeText
   );
 
   $('tip-wf-rentOngoingTot').innerHTML = buildTooltipHTML(
     `Net Ongoing Renter Out-of-Pocket (${horizon} Years)`,
     [
-      ['Cumulative Rent Paid', fmtD(s.cumRentPaid * df)],
-      ['+ Repeat Moving Costs', fmtD(s.cumRentOther * df)]
+      ['Cumulative Rent Paid', fmtD(s.cumRentPaid)],
+      ['+ Repeat Moving Costs', fmtD(s.cumRentOther)]
     ],
-    ['= Net Ongoing Out-of-Pocket (Rent)', fmtD((s.cumRentPaid + s.cumRentOther) * df)],
+    ['= Net Ongoing Out-of-Pocket (Rent)', fmtD(s.cumRentPaid + s.cumRentOther)],
     dModeText
   );
 
-  const monthlyStockContrib = Math.max(0, s.renterPortBasis - s.renterInitInvest);
-  $('wf-rentMonthlyContrib').textContent = '+' + fmtD(monthlyStockContrib * df);
+  const monthlyStockContribDisp = s.renterMonthlyDisp + s.renterDivsDisp;
+  $('wf-rentMonthlyContrib').textContent = '+' + fmtD(monthlyStockContribDisp);
   $('tip-wf-rentMonthlyContrib').innerHTML = buildTooltipHTML(
     `Ongoing Stock Additions & Reinvested Dividends (${horizon} Yrs)`,
     [
-      ['Monthly Cash Flow Savings Invested (When Rent < Own)', '+' + fmtD(s.renterMonthlyRaw * df)],
-      ['+ Reinvested After-Tax Stock Dividends (1.5%/yr yield)', '+' + fmtD(s.renterReinvestDivs * df)]
+      ['Monthly Cash Flow Savings Invested (When Rent < Own)', '+' + fmtD(s.renterMonthlyDisp)],
+      ['+ Reinvested After-Tax Stock Dividends (1.5%/yr yield)', '+' + fmtD(s.renterDivsDisp)]
     ],
-    ['= Total Ongoing Additions to Cost Basis', '+' + fmtD(monthlyStockContrib * df)],
+    ['= Total Ongoing Additions (Year-by-Year Discounted)', '+' + fmtD(monthlyStockContribDisp)],
     dModeText
   );
 
@@ -3957,7 +4427,7 @@ function calc() {
       ['+ Reinvested After-Tax Dividends', '+' + fmtD(s.renterReinvestDivs * df)]
     ],
     ['= Total Cost Basis Principal', fmtD(s.renterPortBasis * df)],
-    'Already-taxed principal and reinvested dividends are not taxed again upon liquidation.'
+    `Already-taxed principal and reinvested dividends are not taxed again upon liquidation. ${termModeText}`
   );
 
   $('tip-wf-rentGains').innerHTML = buildTooltipHTML(
@@ -3970,14 +4440,17 @@ function calc() {
     `Compounded at ${g('opportunity').toFixed(2)}% total return (${(Math.max(0, g('opportunity') - 1.5)).toFixed(2)}% price appreciation + 1.50% dividend yield).`
   );
 
+  const ltcgBreak = taxScope === 'fed_only'
+    ? `Rate includes ${(s.lastYearTp.fedLTCG * 100).toFixed(0)}% Fed LTCG + ${(s.lastYearTp.niit * 100).toFixed(1)}% NIIT.`
+    : `Rate includes ${(s.lastYearTp.fedLTCG * 100).toFixed(0)}% Fed LTCG + ${(s.lastYearTp.niit * 100).toFixed(1)}% NIIT + ${(s.lastYearTp.orMarg * 100).toFixed(2)}% State + ${(s.lastYearTp.localRate * 100).toFixed(1)}% Local.`;
   $('tip-wf-rentExitTax').innerHTML = buildTooltipHTML(
     `Stock Portfolio Liquidation Tax (Year ${horizon})`,
     [
       ['Taxable Unrealized Capital Gains', fmtD(totalGainsBeforeExitTax * df)],
-      ['× Combined Capital Gains Tax Rate', taxOn ? (tp.capGainsCombined * 100).toFixed(2) + '%' : '0% (Taxes Off)']
+      ['× Combined Capital Gains Tax Rate', taxOn ? (s.lastYearTp.capGainsCombined * 100).toFixed(2) + '%' : '0% (Taxes Off)']
     ],
     ['= Capital Gains Tax at Liquidation', '−' + fmtD(s.renterExitTax * df)],
-    taxOn ? `Rate includes ${(tp.fedLTCG * 100).toFixed(0)}% Fed LTCG + ${(tp.niit * 100).toFixed(1)}% NIIT + ${(tp.orMarg * 100).toFixed(2)}% OR + ${(tp.localRate * 100).toFixed(1)}% Local.` : 'Taxes are currently toggled off.'
+    taxOn ? ltcgBreak : 'Taxes are currently toggled off.'
   );
 
   $('tip-wf-secDepRefund').innerHTML = buildTooltipHTML(
@@ -4000,7 +4473,7 @@ function calc() {
       ['+ Refunded Security Deposit', '+' + fmtD(s.securityDeposit * df)]
     ],
     ['= Ending Net Worth · Renter', fmtD(finalRentNW)],
-    dModeText
+    termModeText
   );
 
   // ── 6. Update Monthly Cash Flow Chart Across All Years (with active theme palette)
@@ -4656,32 +5129,34 @@ async function callConnectedLLM(userText) {
 }
 
 const PARAM_LABELS = {
-  horizon:       v => `Stay Horizon → ${v} yrs`,
-  homePrice:     v => `Home Price → ${fmtD(v)}`,
-  downPct:       v => `Down Payment → ${v}%`,
-  mortgageRate:  v => `Mortgage Rate → ${Number(v).toFixed(2)}%`,
-  rent:          v => `Current Rent → ${fmtD(v)}/mo`,
-  appreciation:  v => `Home Appreciation → ${Number(v).toFixed(2)}%/yr`,
-  opportunity:   v => `Stock Return → ${Number(v).toFixed(2)}%/yr`,
-  inflation:     v => `Inflation → ${Number(v).toFixed(1)}%/yr`,
-  loanTerm:      v => `Loan Term → ${v} yrs`,
-  pmiRate:       v => `PMI Rate → ${Number(v).toFixed(2)}%`,
-  refiRate:      v => `Refi Rate → ${Number(v).toFixed(2)}%`,
-  refiYear:      v => `Refi Year → Yr ${v}`,
-  refiCostPct:   v => `Refi Cost → ${Number(v).toFixed(2)}%`,
-  propTax:       v => `Property Tax → ${Number(v).toFixed(2)}%`,
-  homeIns:       v => `Home Insurance → ${Number(v).toFixed(2)}%`,
-  maintenance:   v => `Maintenance → ${Number(v).toFixed(2)}%`,
-  hoa:           v => `HOA → ${fmtD(v)}/mo`,
-  renoCost:      v => `Renovation → ${fmtD(v)}`,
-  buyClosure:    v => `Buying Closing → ${Number(v).toFixed(2)}%`,
-  sellClosure:   v => `Selling Closing → ${Number(v).toFixed(2)}%`,
-  moving:        v => `Moving Cost → ${fmtD(v)}`,
-  rentIncrease:  v => `Rent Growth → ${Number(v).toFixed(2)}%/yr`,
-  renterMoveFreq:v => `Renter Moves → ${v === 0 ? 'Initial only' : 'Every ' + v + ' yrs'}`,
-  rentalIncome:  v => `ADU/Rental Income → ${fmtD(v)}/mo`,
-  rentalPct:     v => `Rental Space Share → ${v}%`,
-  income:        v => `Household Income → ${fmtD(v)}`
+  horizon:         v => `Stay Horizon → ${v} yrs`,
+  homePrice:       v => `Home Price → ${fmtD(v)}`,
+  downPct:         v => `Down Payment → ${v}%`,
+  mortgageRate:    v => `Mortgage Rate → ${Number(v).toFixed(2)}%`,
+  rent:            v => `Current Rent → ${fmtD(v)}/mo`,
+  appreciation:    v => `Home Appreciation → ${Number(v).toFixed(2)}%/yr`,
+  opportunity:     v => `Stock Return → ${Number(v).toFixed(2)}%/yr`,
+  inflation:       v => `Inflation → ${Number(v).toFixed(1)}%/yr`,
+  loanTerm:        v => `Loan Term → ${v} yrs`,
+  loanPoints:      v => `Discount Points → ${Number(v).toFixed(2)}%`,
+  pmiRate:         v => `PMI Rate → ${Number(v).toFixed(2)}%`,
+  refiRate:        v => `Refi Rate → ${Number(v).toFixed(2)}%`,
+  refiYear:        v => `Refi Year → Yr ${v}`,
+  refiCostPct:     v => `Refi Cost → ${Number(v).toFixed(2)}%`,
+  propTax:         v => `Property Tax → ${Number(v).toFixed(2)}%`,
+  homeIns:         v => `Home Insurance → ${Number(v).toFixed(2)}%`,
+  maintenance:     v => `Maintenance → ${Number(v).toFixed(2)}%`,
+  hoa:             v => `HOA → ${fmtD(v)}/mo`,
+  renoCost:        v => `Renovation → ${fmtD(v)}`,
+  buyClosure:      v => `Buying Closing → ${Number(v).toFixed(2)}%`,
+  sellClosure:     v => `Selling Closing → ${Number(v).toFixed(2)}%`,
+  moving:          v => `Moving Cost → ${fmtD(v)}`,
+  rentIncrease:    v => `Rent Growth → ${Number(v).toFixed(2)}%/yr`,
+  renterMoveFreq:  v => `Renter Moves → ${v === 0 ? 'Initial only' : 'Every ' + v + ' yrs'}`,
+  rentalIncome:    v => `ADU/Rental Income → ${fmtD(v)}/mo`,
+  rentalPct:       v => `Rental Space Share → ${v}%`,
+  income:          v => `Household Income → ${fmtD(v)}`,
+  customStateRate: v => `Custom State Tax → ${Number(v).toFixed(2)}%`
 };
 
 function flashRowForInput(id) {
@@ -4754,6 +5229,11 @@ function applyExtractedParams(params, sourceLabel) {
     updatedCount++;
   }
 
+  if (params.refiTermMode !== undefined) {
+    setRefiTermMode(params.refiTermMode);
+    updatedCount++;
+  }
+
   if (params.rentalToggle !== undefined) {
     $('rentalToggle').checked = !!params.rentalToggle;
     $('rentalBody').classList.toggle('open', !!params.rentalToggle);
@@ -4764,6 +5244,26 @@ function applyExtractedParams(params, sourceLabel) {
   if (params.taxToggle !== undefined) {
     $('taxToggle').checked = !!params.taxToggle;
     $('taxBody').classList.toggle('open', !!params.taxToggle);
+    updatedCount++;
+  }
+
+  if (params.taxScope !== undefined) {
+    setTaxScope(params.taxScope, params.propTaxCapToggle !== undefined);
+    updatedCount++;
+  }
+
+  if (params.localTaxToggle !== undefined && $('localTaxToggle')) {
+    $('localTaxToggle').checked = !!params.localTaxToggle;
+    updatedCount++;
+  }
+
+  if (params.propTaxCapToggle !== undefined && $('propTaxCapToggle')) {
+    $('propTaxCapToggle').checked = !!params.propTaxCapToggle;
+    updatedCount++;
+  }
+
+  if (params.incomeGrowthToggle !== undefined && $('incomeGrowthToggle')) {
+    $('incomeGrowthToggle').checked = !!params.incomeGrowthToggle;
     updatedCount++;
   }
 
@@ -4837,8 +5337,13 @@ function copyShareableScenarioLink() {
   });
   url.searchParams.set('mfj', filingMFJ ? '1' : '0');
   url.searchParams.set('refiToggle', $('refiToggle').checked ? '1' : '0');
+  url.searchParams.set('refiTermMode', String(refiTermMode));
   url.searchParams.set('rentalToggle', $('rentalToggle').checked ? '1' : '0');
   url.searchParams.set('taxToggle', $('taxToggle').checked ? '1' : '0');
+  url.searchParams.set('taxScope', taxScope);
+  if ($('localTaxToggle'))    url.searchParams.set('localTaxToggle', $('localTaxToggle').checked ? '1' : '0');
+  if ($('propTaxCapToggle'))  url.searchParams.set('propTaxCapToggle', $('propTaxCapToggle').checked ? '1' : '0');
+  if ($('incomeGrowthToggle')) url.searchParams.set('incomeGrowthToggle', $('incomeGrowthToggle').checked ? '1' : '0');
 
   const shareUrl = url.toString();
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -4854,9 +5359,14 @@ function loadScenarioFromURL() {
   if (!params.has('homePrice') && !params.has('rent') && !params.has('income')) return false;
 
   const extracted = {};
+  const boolKeys = ['mfj', 'refiToggle', 'rentalToggle', 'taxToggle', 'localTaxToggle', 'propTaxCapToggle', 'incomeGrowthToggle'];
   params.forEach((v, k) => {
-    if (k === 'mfj' || k === 'refiToggle' || k === 'rentalToggle' || k === 'taxToggle') {
+    if (boolKeys.includes(k)) {
       extracted[k] = (v === '1' || v === 'true');
+    } else if (k === 'taxScope') {
+      extracted[k] = v;
+    } else if (k === 'refiTermMode') {
+      extracted[k] = v === 'rem' ? 'rem' : parseInt(v, 10);
     } else if (!isNaN(parseFloat(v))) {
       extracted[k] = parseFloat(v);
     }
