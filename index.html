@@ -1430,19 +1430,19 @@ canvas { max-height: 270px; }
               </div>
               <input type="range" id="loanTerm" min="10" max="30" step="5" value="30">
             </div>
-            <div class="row">
+            <div class="row" id="row-pmiRate">
               <div class="row-label">
                 <span class="name">PMI rate (if &lt;20% down)</span>
                 <div class="val-controls">
-                  <span class="dual-chip" id="d-pmiRate">$340/mo</span>
+                  <span class="dual-chip" id="d-pmiRate">$149/mo</span>
                   <div class="num-input-wrap">
                     <input type="text" inputmode="decimal" class="num-input" id="n-pmiRate">
                     <span class="unit">%</span>
                   </div>
                 </div>
               </div>
-              <input type="range" id="pmiRate" min="0.20" max="1.50" step="0.05" value="0.80">
-              <p class="row-hint">Drops automatically at 78% of original price or 80% LTV after 2-yr seasoning.</p>
+              <input type="range" id="pmiRate" min="0.00" max="1.50" step="0.05" value="0.35">
+              <p class="row-hint" id="hint-pmiRate">Auto-scales by LTV tier (&lt;5% down: 1.05%, 5–9%: 0.80%, 10–14%: 0.55%, 15–19%: 0.35%, ≥20%: 0%). Adjustable when &lt;20% down; drops off at 78% original price or 80% LTV after 2 yrs.</p>
             </div>
 
             <hr style="border:none;border-top:1px solid var(--border);margin:10px 0;">
@@ -1517,8 +1517,8 @@ canvas { max-height: 270px; }
                   </div>
                 </div>
               </div>
-              <input type="range" id="propTax" min="0.30" max="3.50" step="0.05" value="1.10">
-              <p class="row-hint">Assessed value growth capped at <strong>3.0%/yr</strong> per Oregon Measure 50.</p>
+              <input type="range" id="propTax" min="0.30" max="3.00" step="0.05" value="1.10">
+              <p class="row-hint">Max rate &amp; annual assessed value growth capped at <strong>3.0%</strong> per Oregon Measure 50.</p>
             </div>
             <div class="row">
               <div class="row-label">
@@ -2305,6 +2305,41 @@ function updateAllSliderFills() {
 
 function g(id) { return +$(id).value; }
 
+function autoPMIRateForDownPct(downPct) {
+  if (downPct >= 20) return 0.00;
+  if (downPct >= 15) return 0.35; // 80.1%–85% LTV
+  if (downPct >= 10) return 0.55; // 85.1%–90% LTV
+  if (downPct >= 5)  return 0.80; // 90.1%–95% LTV
+  return 1.05;                    // >95% LTV
+}
+
+function syncPMIWithDownPayment(autoScaleUnder20) {
+  const downPct = g('downPct');
+  const pmiSlider = $('pmiRate');
+  const pmiNum    = $('n-pmiRate');
+  const pmiRow    = $('row-pmiRate');
+  if (!pmiSlider || !pmiNum) return;
+
+  if (downPct >= 20) {
+    pmiSlider.value    = 0;
+    pmiNum.value       = fmtInputDisplay('pmiRate', 0);
+    pmiSlider.disabled = true;
+    pmiNum.disabled    = true;
+    if (pmiRow) pmiRow.style.opacity = '0.6';
+    updateSliderFill(pmiSlider);
+  } else {
+    pmiSlider.disabled = false;
+    pmiNum.disabled    = false;
+    if (pmiRow) pmiRow.style.opacity = '1';
+    if (autoScaleUnder20 || parseFloat(pmiSlider.value) === 0) {
+      const tierRate = autoPMIRateForDownPct(downPct);
+      pmiSlider.value = tierRate;
+      pmiNum.value    = fmtInputDisplay('pmiRate', tierRate);
+      updateSliderFill(pmiSlider);
+    }
+  }
+}
+
 function syncInputsFromSliders() {
   inputIds.forEach(id => {
     const s = $(id);
@@ -2314,6 +2349,7 @@ function syncInputsFromSliders() {
       updateSliderFill(s);
     }
   });
+  syncPMIWithDownPayment(false);
 }
 
 inputIds.forEach(id => {
@@ -2326,6 +2362,7 @@ inputIds.forEach(id => {
   s.addEventListener('input', () => {
     n.value = fmtInputDisplay(id, s.value);
     updateSliderFill(s);
+    if (id === 'downPct') syncPMIWithDownPayment(true);
     clearActivePreset();
     calc();
   });
@@ -2340,6 +2377,7 @@ inputIds.forEach(id => {
     s.value = val;
     n.value = fmtInputDisplay(id, s.value);
     updateSliderFill(s);
+    if (id === 'downPct') syncPMIWithDownPayment(true);
     clearActivePreset();
     calc();
   };
@@ -2371,7 +2409,7 @@ const presets = {
   default: {
     horizon: 10, homePrice: 600000, downPct: 15, mortgageRate: 6.50, rent: 2800,
     appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.80, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
     propTax: 1.10, homeIns: 0.35, maintenance: 1.00, hoa: 0,
     renoCost: 10000, buyClosure: 2.75, sellClosure: 6.50, moving: 3000,
     rentIncrease: 2.50, renterMoveFreq: 0,
@@ -2381,7 +2419,7 @@ const presets = {
   low: {
     horizon: 10, homePrice: 425000, downPct: 10, mortgageRate: 6.50, rent: 1950,
     appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.85, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, pmiRate: 0.55, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
     propTax: 1.10, homeIns: 0.35, maintenance: 1.00, hoa: 150,
     renoCost: 5000, buyClosure: 2.75, sellClosure: 6.50, moving: 2000,
     rentIncrease: 2.50, renterMoveFreq: 0,
@@ -2391,7 +2429,7 @@ const presets = {
   high: {
     horizon: 10, homePrice: 1100000, downPct: 20, mortgageRate: 6.50, rent: 4600,
     appreciation: 3.50, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.60, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
     propTax: 1.15, homeIns: 0.35, maintenance: 1.00, hoa: 0,
     renoCost: 25000, buyClosure: 2.50, sellClosure: 6.00, moving: 5000,
     rentIncrease: 2.75, renterMoveFreq: 0,
@@ -2401,7 +2439,7 @@ const presets = {
   hack: {
     horizon: 10, homePrice: 675000, downPct: 15, mortgageRate: 6.50, rent: 2800,
     appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, pmiRate: 0.80, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
+    loanTerm: 30, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiCostPct: 1.00,
     propTax: 1.10, homeIns: 0.35, maintenance: 1.10, hoa: 0,
     renoCost: 15000, buyClosure: 2.75, sellClosure: 6.50, moving: 3000,
     rentIncrease: 2.50, renterMoveFreq: 0,
