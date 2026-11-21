@@ -1829,10 +1829,11 @@ canvas { max-height: 270px; }
         <div class="nl-key-drawer" id="nlKeyDrawer">
           <label for="nlApiKey">Optional: Connect Your Own AI Key (Stored only in your browser)</label>
           <div class="nl-key-row">
-            <select class="nl-key-select" id="nlProvider" aria-label="AI Provider" onchange="onNLProviderChange()">
-              <option value="gemini">Google Gemini</option>
-              <option value="openai">OpenAI (GPT-4o mini)</option>
-              <option value="anthropic">Anthropic Claude</option>
+            <select class="nl-key-select" id="nlProvider" aria-label="AI Provider and Model" onchange="onNLProviderChange()">
+              <option value="gemini">Gemini 3.5 Flash-Lite (Recommended)</option>
+              <option value="gemini_hydrogen">Gemini 4 Hydrogen (Deep Nuance)</option>
+              <option value="openai">OpenAI (GPT-4.1 mini)</option>
+              <option value="anthropic">Anthropic (Claude Haiku 4.5)</option>
             </select>
             <input type="text" style="-webkit-text-security:disc;" class="nl-key-input" id="nlApiKey" aria-label="API key" placeholder="Paste API key (e.g. AIzaSy... or sk-...)" autocomplete="off" spellcheck="false">
           </div>
@@ -5223,9 +5224,14 @@ function updateNLModeBadge() {
   const btn   = $('btnToggleKeyDrawer');
   if (!badge) return;
 
-  const providerNames = { gemini: 'Gemini AI', openai: 'OpenAI GPT', anthropic: 'Claude AI' };
+  const providerNames = {
+    gemini:          'Gemini 3.5 Flash-Lite',
+    gemini_hydrogen: 'Gemini 4 Hydrogen',
+    openai:          'GPT-4.1 mini',
+    anthropic:       'Claude Haiku 4.5'
+  };
   if (apiKey) {
-    badge.textContent = '🔑 ' + (providerNames[provider] || 'AI') + ' Connected';
+    badge.textContent = '🔑 ' + (providerNames[provider] || 'Gemini 3.5 Flash-Lite');
     badge.classList.add('connected');
     if (btn) btn.textContent = '🔑 AI Key ✓';
   } else if (typeof window !== 'undefined' && (window.LanguageModel || (window.ai && window.ai.languageModel))) {
@@ -5247,8 +5253,9 @@ function toggleNLKeyDrawer() {
   if (btn) btn.classList.toggle('active', isOpen);
   if (isOpen) {
     const { provider, apiKey } = getStoredAIConfig();
-    $('nlProvider').value = provider;
-    $('nlApiKey').value   = apiKey;
+    const sel = $('nlProvider');
+    sel.value = ['gemini', 'gemini_hydrogen', 'openai', 'anthropic'].includes(provider) ? provider : 'gemini';
+    $('nlApiKey').value = apiKey;
     onNLProviderChange();
   }
 }
@@ -5256,7 +5263,7 @@ function toggleNLKeyDrawer() {
 function onNLProviderChange() {
   const p = $('nlProvider').value;
   const input = $('nlApiKey');
-  if (p === 'gemini') input.placeholder = 'Paste Gemini API key (AIzaSy...)';
+  if (p === 'gemini' || p === 'gemini_hydrogen') input.placeholder = 'Paste Gemini API key (AIzaSy...)';
   else if (p === 'openai') input.placeholder = 'Paste OpenAI API key (sk-...)';
   else input.placeholder = 'Paste Anthropic API key (sk-ant-...)';
 }
@@ -5317,17 +5324,27 @@ function parseScenarioQueryParams(searchStr) {
   return extracted;
 }
 
+function sanitizeExtractedParams(rawObj) {
+  if (!rawObj || typeof rawObj !== 'object' || Array.isArray(rawObj)) return {};
+  const clean = {};
+  Object.keys(rawObj).forEach(k => {
+    const v = rawObj[k];
+    if (v !== null && v !== undefined && v !== '') clean[k] = v;
+  });
+  return clean;
+}
+
 // Comprehensive Built-in Smart Natural Language Parser ($0, Instant)
 function parseScenarioLocally(text) {
   const raw = String(text || '').trim();
   if (!raw) return {};
 
-  // 1. Check if user pasted a JSON block (e.g., from ChatGPT / Claude)
+  // 1. Check if user pasted a JSON block (e.g., from ChatGPT / Claude / Gemini)
   const jsonMatch = raw.match(/\{[\s\S]*\}/);
   if (jsonMatch) {
     try {
       const parsed = JSON.parse(jsonMatch[0]);
-      if (parsed && typeof parsed === 'object') return parsed;
+      if (parsed && typeof parsed === 'object') return sanitizeExtractedParams(parsed);
     } catch (e) {}
   }
 
@@ -5696,16 +5713,64 @@ function parseScenarioLocally(text) {
   return out;
 }
 
-// System prompt schema used for connected API keys, Chrome Built-in AI, or Copy-for-ChatGPT/Claude
+// Structured JSON Schema for single-turn scenario parameter extraction (all fields optional; omit unmentioned keys)
+const SCENARIO_JSON_SCHEMA = {
+  type: 'object',
+  properties: {
+    horizon:            { type: 'integer', description: 'Years planning to stay (1 to 40).' },
+    homePrice:          { type: 'number',  description: 'Purchase price in dollars (50000 to 15000000).' },
+    downPct:            { type: 'number',  description: 'Down payment % (0 to 100); convert dollar down payment to % of homePrice.' },
+    mortgageRate:       { type: 'number',  description: 'Annual mortgage interest rate % (1.5 to 15.0).' },
+    rent:               { type: 'number',  description: 'Current or comparable monthly rent in dollars (300 to 40000).' },
+    appreciation:       { type: 'number',  description: 'Annual home appreciation % (-5.0 to 15.0).' },
+    opportunity:        { type: 'number',  description: 'Annual stock return % (0.0 to 20.0).' },
+    inflation:          { type: 'number',  description: 'Annual inflation % (0.0 to 15.0).' },
+    loanTerm:           { type: 'integer', description: 'Initial mortgage term in years (10, 15, 20, 25, or 30).' },
+    loanPoints:         { type: 'number',  description: 'Upfront mortgage discount points % (0.0 to 5.0).' },
+    pmiRate:            { type: 'number',  description: 'Annual PMI % (0.0 to 3.0).' },
+    refiToggle:         { type: 'boolean', description: 'True if planning a future refinance.' },
+    refiRate:           { type: 'number',  description: 'Future refinance interest rate % (1.5 to 12.0).' },
+    refiYear:           { type: 'integer', description: 'Year of planned refinance (1 to 30).' },
+    refiTermMode:       { type: 'string',  enum: ['30', '20', '15', 'rem'], description: 'Refinance loan term in years or rem for remaining term.' },
+    refiCostPct:        { type: 'number',  description: 'Refinance closing cost % (0.0 to 6.0).' },
+    propTax:            { type: 'number',  description: 'Initial annual property tax % (0.1 to 6.0).' },
+    propTaxCapToggle:   { type: 'boolean', description: 'True if annual assessed value growth is capped (e.g. OR Measure 50 or CA Prop 13).' },
+    propTaxCapRate:     { type: 'number',  description: 'Assessed value growth cap % (2.0, 3.0, or 10.0).' },
+    homeIns:            { type: 'number',  description: 'Annual homeowners insurance % (0.1 to 5.0).' },
+    maintenance:        { type: 'number',  description: 'Annual maintenance % (0.1 to 5.0).' },
+    hoa:                { type: 'number',  description: 'Monthly HOA fee in dollars (0 to 10000).' },
+    renoCost:           { type: 'number',  description: 'Upfront renovation or capital improvements budget in dollars (0 to 2000000).' },
+    buyClosure:         { type: 'number',  description: 'Buying closing cost % (0.0 to 10.0).' },
+    sellClosure:        { type: 'number',  description: 'Selling closing cost % (0.0 to 12.0).' },
+    moving:             { type: 'number',  description: 'Initial moving cost in dollars (0 to 100000).' },
+    rentIncrease:       { type: 'number',  description: 'Annual rent increase % (0.0 to 15.0).' },
+    renterMoveFreq:     { type: 'integer', description: 'Years between renter repeat moves (0 to 15; 0 = initial move only).' },
+    rentalToggle:       { type: 'boolean', description: 'True if renting out an ADU, duplex unit, basement, or room.' },
+    rentalIncome:       { type: 'number',  description: 'Gross monthly ADU or roommate rent in dollars (0 to 25000).' },
+    rentalPct:          { type: 'integer', description: 'Percentage of home square footage rented out (5 to 90).' },
+    vacancy:            { type: 'number',  description: 'Rental vacancy % (0 to 50).' },
+    propMgmt:           { type: 'number',  description: 'Property management fee % (0 to 30).' },
+    taxToggle:          { type: 'boolean', description: 'True to model income/cap-gains taxes, false to ignore taxes.' },
+    taxScope:           { type: 'string',  enum: ['us_typical', 'fed_only', 'or_mult', 'custom_state'], description: 'Tax jurisdiction profile.' },
+    localTaxToggle:     { type: 'boolean', description: 'For or_mult: true inside Portland/Multnomah/Metro, false outside Metro in Oregon.' },
+    customStateRate:    { type: 'number',  description: 'State marginal income tax % when taxScope is custom_state (0.0 to 16.0).' },
+    incomeGrowthToggle: { type: 'boolean', description: 'True if household income grows annually with inflation.' },
+    mfj:                { type: 'boolean', description: 'True for Married Filing Jointly / couple, false for Single.' },
+    income:             { type: 'number',  description: 'Gross annual household income in dollars (0 to 5000000).' },
+    note:               { type: 'string',  description: 'One short sentence summarizing the scenario.' }
+  }
+};
+
+// System prompt schema used for connected API keys, Chrome Built-in AI, or Copy-for-ChatGPT/Claude/Gemini
 function buildAISystemPrompt() {
   return `You extract Buy vs. Rent housing scenario parameters into a flat JSON object.
-Only include keys that are explicitly mentioned or clearly implied by the user's description.
+Only include keys that are explicitly mentioned or clearly implied by the user's description — omit unmentioned keys completely (never emit null values).
 Valid JSON keys and allowed values:
 - "horizon": integer (1 to 40, years planning to stay)
 - "homePrice": number (50000 to 15000000, purchase price in $)
 - "downPct": number (0 to 100, down payment %; if user gives $ down payment, convert to % of homePrice)
 - "mortgageRate": number (1.5 to 15.0, annual mortgage interest rate %)
-- "rent": number (300 to 40000, current/comparable monthly rent in $)
+- "rent": number (300 to 40000, current/comparable monthly rent in $; convert annual rent to monthly if needed)
 - "appreciation": number (-5.0 to 15.0, annual home appreciation %)
 - "opportunity": number (0.0 to 20.0, annual stock return %)
 - "inflation": number (0.0 to 15.0, annual inflation %)
@@ -5715,7 +5780,7 @@ Valid JSON keys and allowed values:
 - "refiToggle": boolean (true if planning a future refinance)
 - "refiRate": number (1.5 to 12.0, future refi interest rate %)
 - "refiYear": integer (1 to 30, year of refinance)
-- "refiTermMode": 30, 20, 15, or "rem" (refinance loan term)
+- "refiTermMode": "30", "20", "15", or "rem" (refinance loan term)
 - "refiCostPct": number (0.0 to 6.0, refi closing cost %)
 - "propTax": number (0.1 to 6.0, initial property tax %)
 - "propTaxCapToggle": boolean (true if assessed value growth is capped, e.g. OR Measure 50 or CA Prop 13)
@@ -5735,13 +5800,42 @@ Valid JSON keys and allowed values:
 - "vacancy": number (0 to 50, rental vacancy %)
 - "propMgmt": number (0 to 30, property management fee %)
 - "taxToggle": boolean (true to model income/cap-gains taxes, false to ignore taxes)
-- "taxScope": "us_typical" (default US ~5% state), "fed_only" (0% income-tax states like TX/FL/WA/NV), "or_mult" (Portland/Multnomah/Oregon), or "custom_state"
+- "taxScope": "us_typical" (default US ~5% state), "fed_only" (0% income-tax states like TX/FL/WA/NV/TN/WY/SD/AK/NH), "or_mult" (Portland/Multnomah/Oregon), or "custom_state"
 - "localTaxToggle": boolean (for "or_mult": true for Portland/Multnomah/Metro, false for outside Metro in Oregon)
 - "customStateRate": number (0.0 to 16.0, state marginal income tax % when taxScope is "custom_state")
+- "incomeGrowthToggle": boolean (true if household income grows with inflation)
 - "mfj": boolean (true for Married Filing Jointly / couple, false for Single)
-- "income": number (0 to 5000000, gross annual household income in $)
+- "income": number (0 to 5000000, gross annual household income in $; convert monthly income to annual if needed)
 - "note": string (1 short sentence summarizing the scenario)
 Return ONLY valid JSON with no markdown code fences.`;
+}
+
+function extractGeminiInteractionText(data) {
+  if (typeof data?.output_text === 'string' && data.output_text) return data.output_text;
+  const steps = Array.isArray(data?.steps) ? data.steps : [];
+  const textParts = [];
+  for (let i = steps.length - 1; i >= 0; i--) {
+    const s = steps[i];
+    if (s && s.type === 'model_output' && Array.isArray(s.content)) {
+      const stepTxt = s.content
+        .filter(c => c && c.type === 'text' && typeof c.text === 'string')
+        .map(c => c.text)
+        .join('');
+      if (stepTxt) textParts.unshift(stepTxt);
+    } else if (textParts.length > 0) {
+      break;
+    }
+  }
+  return textParts.join('') || '{}';
+}
+
+async function extractAPIErrorMessage(resp, label) {
+  try {
+    const errBody = await resp.json();
+    const msg = (Array.isArray(errBody) ? errBody[0]?.error?.message : errBody?.error?.message) || '';
+    if (msg) return `${label}: ${msg.slice(0, 120)}`;
+  } catch (e) {}
+  return `${label} HTTP ${resp.status}`;
 }
 
 async function callConnectedLLM(userText) {
@@ -5749,24 +5843,41 @@ async function callConnectedLLM(userText) {
   const sysPrompt = buildAISystemPrompt();
 
   if (apiKey) {
-    if (provider === 'gemini') {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
-      const resp = await fetch(url, {
+    if (provider === 'gemini' || provider === 'gemini_hydrogen') {
+      // GA Gemini Interactions API (v1): gemini-3.5-flash-lite is purpose-built for fast, low-cost structured JSON extraction;
+      // gemini-4-hydrogen provides frontier Gemini 4 nuance when explicitly selected.
+      const geminiModel = provider === 'gemini_hydrogen' ? 'gemini-4-hydrogen' : 'gemini-3.5-flash-lite';
+      const geminiLabel = provider === 'gemini_hydrogen' ? 'Gemini 4 Hydrogen' : 'Gemini 3.5 Flash-Lite';
+      const resp = await fetch('https://generativelanguage.googleapis.com/v1/interactions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: sysPrompt }] },
-          contents: [{ role: 'user', parts: [{ text: userText }] }],
-          generationConfig: { responseMimeType: 'application/json', temperature: 0.1 }
+          model: geminiModel,
+          system_instruction: sysPrompt,
+          input: userText,
+          store: false,
+          generation_config: {
+            thinking_level: 'low'
+          },
+          response_format: {
+            type: 'text',
+            mime_type: 'application/json',
+            schema: SCENARIO_JSON_SCHEMA
+          }
         })
       });
-      if (!resp.ok) throw new Error(`Gemini API HTTP ${resp.status}`);
+      if (!resp.ok) throw new Error(await extractAPIErrorMessage(resp, 'Gemini API'));
       const data = await resp.json();
-      const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-      return { parsed: JSON.parse(txt), source: 'Gemini AI' };
+      const txt  = extractGeminiInteractionText(data);
+      const jsonMatch = txt.match(/\{[\s\S]*\}/);
+      return { parsed: sanitizeExtractedParams(JSON.parse(jsonMatch ? jsonMatch[0] : txt)), source: geminiLabel };
     }
 
     if (provider === 'openai') {
+      // GPT-4.1 mini: fast non-reasoning structured JSON extraction without multi-second reasoning token overhead
       const resp = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -5774,22 +5885,24 @@ async function callConnectedLLM(userText) {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'gpt-4.1-mini',
           response_format: { type: 'json_object' },
-          temperature: 0.1,
+          temperature: 0,
+          store: false,
           messages: [
             { role: 'system', content: sysPrompt },
             { role: 'user', content: userText }
           ]
         })
       });
-      if (!resp.ok) throw new Error(`OpenAI API HTTP ${resp.status}`);
+      if (!resp.ok) throw new Error(await extractAPIErrorMessage(resp, 'OpenAI API'));
       const data = await resp.json();
-      const txt = data?.choices?.[0]?.message?.content || '{}';
-      return { parsed: JSON.parse(txt), source: 'OpenAI GPT' };
+      const txt  = data?.choices?.[0]?.message?.content || '{}';
+      return { parsed: sanitizeExtractedParams(JSON.parse(txt)), source: 'OpenAI GPT-4.1 mini' };
     }
 
     if (provider === 'anthropic') {
+      // Claude Haiku 4.5: lowest-latency, most cost-efficient Claude 4.5 model for structured JSON extraction
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -5800,16 +5913,17 @@ async function callConnectedLLM(userText) {
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5',
-          max_tokens: 600,
+          max_tokens: 800,
+          temperature: 0,
           system: sysPrompt,
           messages: [{ role: 'user', content: userText }]
         })
       });
-      if (!resp.ok) throw new Error(`Claude API HTTP ${resp.status}`);
+      if (!resp.ok) throw new Error(await extractAPIErrorMessage(resp, 'Claude API'));
       const data = await resp.json();
-      const txt = data?.content?.[0]?.text || '{}';
+      const txt  = data?.content?.[0]?.text || '{}';
       const jsonMatch = txt.match(/\{[\s\S]*\}/);
-      return { parsed: JSON.parse(jsonMatch ? jsonMatch[0] : txt), source: 'Claude AI' };
+      return { parsed: sanitizeExtractedParams(JSON.parse(jsonMatch ? jsonMatch[0] : txt)), source: 'Claude Haiku 4.5' };
     }
   }
 
@@ -5818,10 +5932,15 @@ async function callConnectedLLM(userText) {
     const lmFactory = window.LanguageModel || (window.ai && window.ai.languageModel);
     if (lmFactory && typeof lmFactory.create === 'function') {
       const session = await lmFactory.create({ systemPrompt: sysPrompt });
-      const reply = await session.prompt(userText);
+      let reply;
+      try {
+        reply = await session.prompt(userText, { responseConstraint: SCENARIO_JSON_SCHEMA });
+      } catch (constraintErr) {
+        reply = await session.prompt(userText);
+      }
       const jsonMatch = String(reply).match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        return { parsed: JSON.parse(jsonMatch[0]), source: 'Chrome Built-in AI' };
+        return { parsed: sanitizeExtractedParams(JSON.parse(jsonMatch[0])), source: 'Chrome Built-in AI' };
       }
     }
   } catch (e) {}
@@ -5883,7 +6002,8 @@ function showNLStatus(msg, chipsList) {
   chips.innerHTML = (chipsList || []).map(c => `<span class="nl-chip">✓ ${escapeHTML(c)}</span>`).join('');
 }
 
-function applyExtractedParams(params, sourceLabel) {
+function applyExtractedParams(rawParams, sourceLabel) {
+  const params = sanitizeExtractedParams(rawParams);
   if (!params || typeof params !== 'object') return 0;
   const chips = [];
   let updatedCount = 0;
@@ -6036,7 +6156,7 @@ async function applyNaturalLanguageScenario() {
     }
   } catch (err) {
     const localParams = parseScenarioLocally(text);
-    const count = applyExtractedParams(localParams, 'Built-in Smart Parser (API fallback)');
+    const count = applyExtractedParams(localParams, `Built-in Smart Parser (${err.message})`);
     if (count === 0) {
       showNLStatus(`AI Key Error (${err.message}). Check your API key or use the built-in Smart Parser.`, []);
     }
