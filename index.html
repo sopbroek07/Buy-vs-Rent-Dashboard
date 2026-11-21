@@ -17,12 +17,20 @@
 :root,
 [data-theme="fintech"] {
   color-scheme: light;
-  --bg: #f8fafc;
+  --bg: #eaf0f8;
+  --canvas-bg:
+    radial-gradient(1100px 680px at 8% 0%, rgba(37, 99, 235, 0.085), transparent 60%),
+    radial-gradient(950px 620px at 94% 100%, rgba(4, 120, 87, 0.065), transparent 58%),
+    radial-gradient(700px 500px at 55% 42%, rgba(99, 102, 241, 0.035), transparent 65%),
+    linear-gradient(180deg, #eef3fb 0%, #e7eef8 100%);
+  --sidebar-bg: linear-gradient(180deg, #f5f8fd 0%, #edf3fb 100%);
   --card: #ffffff;
-  --surface-2: #f1f5f9;
-  --surface-hover: #f0f7ff;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+  --card-bg: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  --presets-bg: rgba(255, 255, 255, 0.68);
+  --surface-2: #e9eff7;
+  --surface-hover: #edf5ff;
+  --border: #d8e2ef;
+  --border-strong: #c2d0e3;
   --text: #0f172a;
   --muted: #475569;
   --buy: #2563eb;
@@ -38,19 +46,19 @@
   --green-border: #a7f3d0;
   --red: #dc2626;
   --neutral: #475569;
-  --slider-track: #e2e8f0;
-  --header-bg: #ffffff;
+  --slider-track: #d6e0ee;
+  --header-bg: linear-gradient(90deg, #f8fbff 0%, #f1f6fd 55%, #ebf2fc 100%);
   --header-text: #0f172a;
   --header-sub: #475569;
-  --header-border: #e2e8f0;
-  --header-ctrl-bg: #f1f5f9;
+  --header-border: #d6e2f0;
+  --header-ctrl-bg: rgba(255, 255, 255, 0.82);
   --header-ctrl-text: #334155;
-  --header-ctrl-active-bg: #ffffff;
-  --header-ctrl-active-text: #0f172a;
+  --header-ctrl-active-bg: #2563eb;
+  --header-ctrl-active-text: #ffffff;
   --card-radius: 10px;
-  --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --card-shadow: 0 2px 8px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
   --card-top-accent: 3px;
-  --chart-grid: #f1f5f9;
+  --chart-grid: #edf2f7;
   --chart-tick: #475569;
   --font-heading: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
 }
@@ -60,12 +68,19 @@
    ═══════════════════════════════════════════════════════════════ */
 [data-theme="pnw"] {
   color-scheme: light;
-  --bg: #f6f3ec;
-  --card: #fcfbf9;
-  --surface-2: #efeae1;
-  --surface-hover: #eaf2ee;
-  --border: #dfd9ce;
-  --border-strong: #c9c1b4;
+  --bg: #ece5d8;
+  --canvas-bg:
+    radial-gradient(1050px 650px at 6% 0%, rgba(27, 94, 74, 0.085), transparent 58%),
+    radial-gradient(950px 620px at 95% 96%, rgba(181, 77, 40, 0.075), transparent 58%),
+    linear-gradient(180deg, #f1ece0 0%, #e7dfd0 100%);
+  --sidebar-bg: linear-gradient(180deg, #f7f4ec 0%, #eee8db 100%);
+  --card: #fdfcf9;
+  --card-bg: linear-gradient(180deg, #fefdfa 0%, #faf8f2 100%);
+  --presets-bg: rgba(254, 253, 250, 0.68);
+  --surface-2: #e9e3d7;
+  --surface-hover: #e7f1ec;
+  --border: #dad2c4;
+  --border-strong: #c4bba9;
   --text: #1c2420;
   --muted: #524e47;
   --buy: #1b5e4a;
@@ -81,8 +96,8 @@
   --green-border: #a8d1be;
   --red: #b93829;
   --neutral: #524e47;
-  --slider-track: #dcd5c9;
-  --header-bg: #163a2d;
+  --slider-track: #d6cebf;
+  --header-bg: linear-gradient(135deg, #133327 0%, #1b4938 55%, #15392c 100%);
   --header-text: #f7f4ef;
   --header-sub: #cfe2da;
   --header-border: #102b21;
@@ -91,9 +106,9 @@
   --header-ctrl-active-bg: #fcfbf9;
   --header-ctrl-active-text: #163a2d;
   --card-radius: 8px;
-  --card-shadow: 0 1px 2px rgba(28, 36, 32, 0.05);
+  --card-shadow: 0 2px 7px rgba(28, 36, 32, 0.06), 0 1px 2px rgba(28, 36, 32, 0.03);
   --card-top-accent: 0px;
-  --chart-grid: #ebe6dc;
+  --chart-grid: #ebe5da;
   --chart-tick: #524e47;
   --font-heading: Georgia, 'Times New Roman', serif;
 }
@@ -103,12 +118,20 @@
    ═══════════════════════════════════════════════════════════════ */
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b1120;
-  --card: #151f32;
+  --bg: #080e1c;
+  --canvas-bg:
+    radial-gradient(1050px 650px at 14% 0%, rgba(56, 189, 248, 0.10), transparent 58%),
+    radial-gradient(900px 600px at 92% 96%, rgba(52, 211, 153, 0.075), transparent 56%),
+    radial-gradient(700px 480px at 52% 45%, rgba(99, 102, 241, 0.05), transparent 65%),
+    linear-gradient(180deg, #091020 0%, #0b1324 100%);
+  --sidebar-bg: linear-gradient(180deg, #0e1628 0%, #0b1222 100%);
+  --card: #152035;
+  --card-bg: linear-gradient(180deg, #18253c 0%, #131e31 100%);
+  --presets-bg: rgba(24, 37, 60, 0.72);
   --surface-2: #1e293b;
   --surface-hover: #1e3148;
-  --border: #26354d;
-  --border-strong: #334155;
+  --border: #263650;
+  --border-strong: #354764;
   --text: #f1f5f9;
   --muted: #cbd5e1;
   --buy: #38bdf8;
@@ -125,16 +148,16 @@
   --red: #f87171;
   --neutral: #cbd5e1;
   --slider-track: #334155;
-  --header-bg: #111827;
+  --header-bg: linear-gradient(90deg, #0d1526 0%, #121e36 55%, #0e172a 100%);
   --header-text: #f8fafc;
   --header-sub: #cbd5e1;
-  --header-border: #1f2937;
+  --header-border: #1f2d44;
   --header-ctrl-bg: #1e293b;
   --header-ctrl-text: #cbd5e1;
   --header-ctrl-active-bg: #38bdf8;
   --header-ctrl-active-text: #0b1120;
   --card-radius: 10px;
-  --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   --card-top-accent: 2px;
   --chart-grid: #1e293b;
   --chart-tick: #cbd5e1;
@@ -146,12 +169,20 @@
    ═══════════════════════════════════════════════════════════════ */
 [data-theme="bento"] {
   color-scheme: light;
-  --bg: #eef2f6;
+  --bg: #e8edf7;
+  --canvas-bg:
+    radial-gradient(1050px 660px at 10% 4%, rgba(79, 70, 229, 0.10), transparent 58%),
+    radial-gradient(950px 620px at 92% 94%, rgba(225, 29, 72, 0.065), transparent 56%),
+    radial-gradient(750px 520px at 55% 46%, rgba(14, 165, 233, 0.05), transparent 65%),
+    linear-gradient(180deg, #edf0fa 0%, #e4ebf7 100%);
+  --sidebar-bg: linear-gradient(180deg, #f5f6fd 0%, #eceffa 100%);
   --card: #ffffff;
-  --surface-2: #f1f5f9;
-  --surface-hover: #f5f3ff;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+  --card-bg: linear-gradient(180deg, #ffffff 0%, #fcfcff 100%);
+  --presets-bg: rgba(255, 255, 255, 0.72);
+  --surface-2: #eaedf8;
+  --surface-hover: #f2efff;
+  --border: #d9dff0;
+  --border-strong: #c4cde4;
   --text: #1e1b4b;
   --muted: #475569;
   --buy: #4f46e5;
@@ -167,8 +198,8 @@
   --green-border: #a7f3d0;
   --red: #be123c;
   --neutral: #475569;
-  --slider-track: #dde3ee;
-  --header-bg: linear-gradient(135deg, #312e81, #4f46e5);
+  --slider-track: #d5dcef;
+  --header-bg: linear-gradient(135deg, #292574 0%, #4338ca 55%, #4f46e5 100%);
   --header-text: #ffffff;
   --header-sub: rgba(255, 255, 255, 0.86);
   --header-border: transparent;
@@ -177,9 +208,9 @@
   --header-ctrl-active-bg: #ffffff;
   --header-ctrl-active-text: #312e81;
   --card-radius: 14px;
-  --card-shadow: 0 4px 12px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --card-shadow: 0 4px 14px rgba(49, 46, 129, 0.065), 0 1px 3px rgba(15, 23, 42, 0.03);
   --card-top-accent: 0px;
-  --chart-grid: #f1f5f9;
+  --chart-grid: #eef1f8;
   --chart-tick: #475569;
   --font-heading: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
 }
@@ -200,7 +231,8 @@ html, body { height: 100%; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  background: var(--bg);
+  background: var(--canvas-bg, var(--bg));
+  background-color: var(--bg);
   color: var(--text);
   font-size: 13px;
   line-height: 1.45;
@@ -396,7 +428,7 @@ header p {
 
 /* ── INPUT PANEL ── */
 .inputs {
-  background: var(--card);
+  background: var(--sidebar-bg, var(--card));
   border-right: 1px solid var(--border);
   overflow-y: auto;
   padding: 16px 18px 36px;
@@ -692,11 +724,12 @@ header p {
 
 /* ── PRESET BAR ── */
 .presets-box {
-  background: var(--surface-2);
+  background: var(--presets-bg, var(--surface-2));
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   padding: 10px 11px;
   margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
 .presets-header {
   display: flex;
@@ -1055,6 +1088,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 /* ── OUTPUT PANEL ── */
 .outputs {
+  background: var(--canvas-bg, var(--bg));
   overflow-y: auto;
   padding: 18px 22px 36px;
   display: flex;
@@ -1186,7 +1220,7 @@ input[type="range"]::-moz-range-thumb:hover {
   .cards-4 { grid-template-columns: 1fr; }
 }
 .card {
-  background: var(--card);
+  background: var(--card-bg, var(--card));
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
@@ -1366,7 +1400,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 /* ── CHARTS ── */
 .chart-card {
-  background: var(--card);
+  background: var(--card-bg, var(--card));
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
@@ -1424,7 +1458,7 @@ canvas { max-height: 270px; }
 
 /* ── WATERFALL TABLE & ROW HOVER TOOLTIPS ── */
 .waterfall-card {
-  background: var(--card);
+  background: var(--card-bg, var(--card));
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
@@ -1789,7 +1823,7 @@ canvas { max-height: 270px; }
       <p><strong>Type or slide:</strong> Click any value box to type an exact number (even above the slider range), or drag the slider. Percentage inputs automatically show their dollar equivalents.</p>
       <p><strong>Hover or focus tiles &amp; waterfall rows:</strong> Hover or Tab-focus any multi-variable tile or waterfall line (marked with <code>∑</code>) to see the exact formula and numbers behind it.</p>
       <p><strong>Apples-to-apples Net Worth methodology:</strong> Both Buyer and Renter start with the same upfront cash and spend the same monthly cash envelope. Any upfront cash or monthly savings the Renter doesn't spend on housing is invested in stocks (minus a 1-month security deposit locked at 0% return). Conversely, in years owning costs less than renting, the Buyer invests the monthly savings.</p>
-      <p><strong>Region &amp; Portland Presets (top bar):</strong> Defaults to a US-wide baseline ($425k home, 0.60% insurance, Federal + 5% typical state tax). Switch <strong>📍 Region</strong> to <strong>🌲 Portland / MultCo, OR</strong> (or click <strong>🌲 PDX</strong> below) to load Multnomah County / Metro SHS &amp; PFA taxes, Oregon Measure 50's 3% property tax cap, and Portland housing scenarios.</p>
+      <p><strong>Region &amp; Portland Presets (top bar):</strong> Defaults to a US-wide single-family benchmark ($425k home, $2,350/mo comparable 3BR rent, 20% down, 0.60% insurance, Federal + 5% typical state tax). Switch <strong>📍 Region</strong> to <strong>🌲 Portland / MultCo, OR</strong> (or click <strong>🌲 PDX</strong> below) to load Multnomah County / Metro SHS &amp; PFA taxes, Oregon Measure 50's 3% property tax cap, and Portland housing scenarios.</p>
     </div>
 
     <!-- All-in-One Natural Language Scenario Bar (Minimized by Default) -->
@@ -1925,14 +1959,14 @@ canvas { max-height: 270px; }
         <div class="row-label">
           <span class="name">Down payment</span>
           <div class="val-controls">
-            <span class="dual-chip" id="d-downPct">$63,750</span>
+            <span class="dual-chip" id="d-downPct">$85,000</span>
             <div class="num-input-wrap">
               <input type="text" inputmode="decimal" class="num-input" id="n-downPct">
               <span class="unit">%</span>
             </div>
           </div>
         </div>
-        <input type="range" id="downPct" min="0" max="100" step="1" value="15">
+        <input type="range" id="downPct" min="0" max="100" step="1" value="20">
       </div>
 
       <!-- Mortgage Rate -->
@@ -1940,7 +1974,7 @@ canvas { max-height: 270px; }
         <div class="row-label">
           <span class="name">Mortgage interest rate</span>
           <div class="val-controls">
-            <span class="dual-chip" id="d-mortgageRate">$2,284/mo P&amp;I</span>
+            <span class="dual-chip" id="d-mortgageRate">$2,149/mo P&amp;I</span>
             <div class="num-input-wrap">
               <input type="text" inputmode="decimal" class="num-input" id="n-mortgageRate">
               <span class="unit">%</span>
@@ -1961,7 +1995,7 @@ canvas { max-height: 270px; }
             </div>
           </div>
         </div>
-        <input type="range" id="rent" min="500" max="12000" step="50" value="2050">
+        <input type="range" id="rent" min="500" max="12000" step="50" value="2350">
       </div>
 
       <!-- Annual Home Appreciation -->
@@ -1975,7 +2009,7 @@ canvas { max-height: 270px; }
             </div>
           </div>
         </div>
-        <input type="range" id="appreciation" min="0.00" max="8.00" step="0.25" value="3.25">
+        <input type="range" id="appreciation" min="0.00" max="8.00" step="0.05" value="3.60">
       </div>
 
       <!-- Investment Return Rate -->
@@ -2003,8 +2037,8 @@ canvas { max-height: 270px; }
             </div>
           </div>
         </div>
-        <input type="range" id="inflation" min="0.0" max="10.0" step="0.5" value="3.5">
-        <p class="row-hint">Default 3.5% reflects US CPI-U inflation (~3.7% YoY, rounded to nearest 0.5% step). Discounts future values into <strong>Today's Dollars</strong> and indexes CPI-linked tax brackets.</p>
+        <input type="range" id="inflation" min="0.0" max="10.0" step="0.1" value="3.0">
+        <p class="row-hint">Default 3.0% reflects long-run US CPI inflation. Discounts future values into <strong>Today's Dollars</strong> and indexes CPI-linked tax brackets.</p>
       </div>
     </div>
 
@@ -2060,14 +2094,14 @@ canvas { max-height: 270px; }
               <div class="row-label">
                 <span class="name">PMI rate (if &lt;20% down)</span>
                 <div class="val-controls">
-                  <span class="dual-chip" id="d-pmiRate">$149/mo</span>
+                  <span class="dual-chip" id="d-pmiRate">$0/mo</span>
                   <div class="num-input-wrap">
                     <input type="text" inputmode="decimal" class="num-input" id="n-pmiRate">
                     <span class="unit">%</span>
                   </div>
                 </div>
               </div>
-              <input type="range" id="pmiRate" min="0.00" max="1.50" step="0.05" value="0.35">
+              <input type="range" id="pmiRate" min="0.00" max="1.50" step="0.05" value="0.00">
               <p class="row-hint" id="hint-pmiRate">Auto-scales by LTV tier (&lt;5% down: 1.05%, 5–9%: 0.80%, 10–14%: 0.55%, 15–19%: 0.35%, ≥20%: 0%). Adjustable when &lt;20% down; drops off at 78% original price or 80% LTV after 2 yrs.</p>
             </div>
 
@@ -2280,12 +2314,12 @@ canvas { max-height: 270px; }
           <button type="button" class="acc-header" aria-expanded="false" onclick="toggleAcc('acc-rentalAlt')">
             <span class="acc-title">🏡 Renter Assumptions &amp; Deposit</span>
             <div class="acc-right">
-              <span class="acc-summary" id="sum-rentalAlt">2.50%/yr · 1mo dep</span>
+              <span class="acc-summary" id="sum-rentalAlt">3.00%/yr · 1mo dep</span>
               <span class="acc-arrow" aria-hidden="true">▶</span>
             </div>
           </button>
           <div class="acc-body">
-            <p class="section-note">Renter locks up a <strong>1-month security deposit (<span id="note-secDep">$2,050</span>)</strong> at Year 0 earning <strong>0% return</strong> over the horizon (refunded at exit).</p>
+            <p class="section-note">Renter locks up a <strong>1-month security deposit (<span id="note-secDep">$2,350</span>)</strong> at Year 0 earning <strong>0% return</strong> over the horizon (refunded at exit).</p>
             <div class="row">
               <div class="row-label">
                 <span class="name">Annual rent increase</span>
@@ -2296,7 +2330,7 @@ canvas { max-height: 270px; }
                   </div>
                 </div>
               </div>
-              <input type="range" id="rentIncrease" min="0.00" max="8.00" step="0.25" value="2.50">
+              <input type="range" id="rentIncrease" min="0.00" max="8.00" step="0.25" value="3.00">
             </div>
             <div class="row">
               <div class="row-label">
@@ -2451,7 +2485,7 @@ canvas { max-height: 270px; }
                     </div>
                   </div>
                 </div>
-                <input type="range" id="income" min="50000" max="750000" step="5000" value="110000">
+                <input type="range" id="income" min="50000" max="750000" step="5000" value="115000">
                 <label class="tax-toggle-row" style="margin-top:6px;">
                   <input type="checkbox" id="incomeGrowthToggle" checked onchange="clearActivePreset(); calc();">
                   <div class="tog-track"></div>
@@ -3346,93 +3380,93 @@ inputIds.forEach(id => {
 // ═══════════════════════════════════════════════════════════════
 const usPresets = {
   low: {
-    title: '🌱 Starter Home', sub: '$75,000 inc · $300,000 home',
-    horizon: 10, homePrice: 300000, downPct: 10, mortgageRate: 6.50, rent: 1550,
-    appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
+    title: '🌱 Starter Home', sub: '$80,000 inc · $300,000 home',
+    horizon: 10, homePrice: 300000, downPct: 10, mortgageRate: 6.50, rent: 1800,
+    appreciation: 3.60, opportunity: 7.00, inflation: 3.0,
     loanTerm: 30, loanPoints: 0.00, pmiRate: 0.55, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
-    propTax: 1.10, propTaxCapToggle: false, homeIns: 0.60, maintenance: 1.00, hoa: 125,
+    propTax: 1.10, propTaxCapToggle: false, homeIns: 0.60, maintenance: 1.00, hoa: 100,
     renoCost: 5000, buyClosure: 2.75, sellClosure: 6.50, moving: 2000,
-    rentIncrease: 2.50, renterMoveFreq: 0,
-    rentalToggle: false, rentalIncome: 1100, rentalPct: 25, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 75000, incomeGrowthToggle: true
+    rentIncrease: 3.00, renterMoveFreq: 0,
+    rentalToggle: false, rentalIncome: 1150, rentalPct: 25, vacancy: 5, propMgmt: 0,
+    taxToggle: true, mfj: false, income: 80000, incomeGrowthToggle: true
   },
   default: {
-    title: '🇺🇸 US Median Buyer', sub: '$110,000 inc · $425,000 home',
-    horizon: 10, homePrice: 425000, downPct: 15, mortgageRate: 6.50, rent: 2050,
-    appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
+    title: '🇺🇸 US Median Buyer', sub: '$115,000 inc · $425,000 home',
+    horizon: 10, homePrice: 425000, downPct: 20, mortgageRate: 6.50, rent: 2350,
+    appreciation: 3.60, opportunity: 7.00, inflation: 3.0,
+    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, propTaxCapToggle: false, homeIns: 0.60, maintenance: 1.00, hoa: 0,
     renoCost: 8000, buyClosure: 2.75, sellClosure: 6.50, moving: 2500,
-    rentIncrease: 2.50, renterMoveFreq: 0,
+    rentIncrease: 3.00, renterMoveFreq: 0,
     rentalToggle: false, rentalIncome: 1450, rentalPct: 30, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 110000, incomeGrowthToggle: true
+    taxToggle: true, mfj: false, income: 115000, incomeGrowthToggle: true
   },
   high: {
     title: '🏡 Move-Up Family', sub: '$235,000 MFJ · $750,000 home',
-    horizon: 10, homePrice: 750000, downPct: 20, mortgageRate: 6.50, rent: 3400,
-    appreciation: 3.50, opportunity: 7.00, inflation: 3.5,
+    horizon: 10, homePrice: 750000, downPct: 20, mortgageRate: 6.50, rent: 4000,
+    appreciation: 3.60, opportunity: 7.00, inflation: 3.0,
     loanTerm: 30, loanPoints: 0.00, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.15, propTaxCapToggle: false, homeIns: 0.55, maintenance: 1.00, hoa: 0,
-    renoCost: 20000, buyClosure: 2.50, sellClosure: 6.00, moving: 4000,
-    rentIncrease: 2.75, renterMoveFreq: 0,
-    rentalToggle: false, rentalIncome: 1850, rentalPct: 25, vacancy: 5, propMgmt: 0,
+    renoCost: 18000, buyClosure: 2.50, sellClosure: 6.00, moving: 4000,
+    rentIncrease: 3.00, renterMoveFreq: 0,
+    rentalToggle: false, rentalIncome: 1950, rentalPct: 25, vacancy: 5, propMgmt: 0,
     taxToggle: true, mfj: true, income: 235000, incomeGrowthToggle: true
   },
   hack: {
     title: '🏘️ House Hack / Duplex', sub: '$500,000 + $1,450/mo unit',
-    horizon: 10, homePrice: 500000, downPct: 15, mortgageRate: 6.50, rent: 2050,
-    appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
+    horizon: 10, homePrice: 500000, downPct: 15, mortgageRate: 6.50, rent: 2350,
+    appreciation: 3.60, opportunity: 7.00, inflation: 3.0,
     loanTerm: 30, loanPoints: 0.00, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, propTaxCapToggle: false, homeIns: 0.65, maintenance: 1.10, hoa: 0,
     renoCost: 12000, buyClosure: 2.75, sellClosure: 6.50, moving: 2500,
-    rentIncrease: 2.50, renterMoveFreq: 0,
+    rentIncrease: 3.00, renterMoveFreq: 0,
     rentalToggle: true, rentalIncome: 1450, rentalPct: 30, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 110000, incomeGrowthToggle: true
+    taxToggle: true, mfj: false, income: 115000, incomeGrowthToggle: true
   }
 };
 
 const pdxPresets = {
   low: {
-    title: '🌱 Entry Earner', sub: '$85,000 inc · $425,000 home',
-    horizon: 10, homePrice: 425000, downPct: 10, mortgageRate: 6.50, rent: 1950,
-    appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
+    title: '🌱 Entry Earner', sub: '$95,000 inc · $425,000 home',
+    horizon: 10, homePrice: 425000, downPct: 10, mortgageRate: 6.50, rent: 2300,
+    appreciation: 3.50, opportunity: 7.00, inflation: 3.0,
     loanTerm: 30, loanPoints: 0.00, pmiRate: 0.55, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
-    propTax: 1.10, propTaxCapToggle: true, homeIns: 0.35, maintenance: 1.00, hoa: 150,
+    propTax: 1.10, propTaxCapToggle: true, homeIns: 0.35, maintenance: 1.00, hoa: 125,
     renoCost: 5000, buyClosure: 2.75, sellClosure: 6.50, moving: 2000,
-    rentIncrease: 2.50, renterMoveFreq: 0,
-    rentalToggle: false, rentalIncome: 1200, rentalPct: 25, vacancy: 5, propMgmt: 0,
-    taxToggle: true, mfj: false, income: 85000, incomeGrowthToggle: true
+    rentIncrease: 3.00, renterMoveFreq: 0,
+    rentalToggle: false, rentalIncome: 1300, rentalPct: 25, vacancy: 5, propMgmt: 0,
+    taxToggle: true, mfj: false, income: 95000, incomeGrowthToggle: true
   },
   default: {
     title: '🌲 Median Earner', sub: '$150,000 inc · $600,000 home',
-    horizon: 10, homePrice: 600000, downPct: 15, mortgageRate: 6.50, rent: 2800,
-    appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
-    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
+    horizon: 10, homePrice: 600000, downPct: 20, mortgageRate: 6.50, rent: 3000,
+    appreciation: 3.50, opportunity: 7.00, inflation: 3.0,
+    loanTerm: 30, loanPoints: 0.00, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, propTaxCapToggle: true, homeIns: 0.35, maintenance: 1.00, hoa: 0,
     renoCost: 10000, buyClosure: 2.75, sellClosure: 6.50, moving: 3000,
-    rentIncrease: 2.50, renterMoveFreq: 0,
+    rentIncrease: 3.00, renterMoveFreq: 0,
     rentalToggle: false, rentalIncome: 1750, rentalPct: 25, vacancy: 5, propMgmt: 0,
     taxToggle: true, mfj: false, income: 150000, incomeGrowthToggle: true
   },
   high: {
     title: '🏔️ High Earner', sub: '$375,000 MFJ · $1,100,000 home',
-    horizon: 10, homePrice: 1100000, downPct: 20, mortgageRate: 6.50, rent: 4600,
-    appreciation: 3.50, opportunity: 7.00, inflation: 3.5,
+    horizon: 10, homePrice: 1100000, downPct: 20, mortgageRate: 6.50, rent: 4850,
+    appreciation: 3.50, opportunity: 7.00, inflation: 3.0,
     loanTerm: 30, loanPoints: 0.00, pmiRate: 0.00, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.15, propTaxCapToggle: true, homeIns: 0.35, maintenance: 1.00, hoa: 0,
     renoCost: 25000, buyClosure: 2.50, sellClosure: 6.00, moving: 5000,
-    rentIncrease: 2.75, renterMoveFreq: 0,
+    rentIncrease: 3.00, renterMoveFreq: 0,
     rentalToggle: false, rentalIncome: 2200, rentalPct: 25, vacancy: 5, propMgmt: 0,
     taxToggle: true, mfj: true, income: 375000, incomeGrowthToggle: true
   },
   hack: {
     title: '🏘️ House Hack / ADU', sub: '$675,000 + $1,750/mo ADU',
-    horizon: 10, homePrice: 675000, downPct: 15, mortgageRate: 6.50, rent: 2800,
-    appreciation: 3.25, opportunity: 7.00, inflation: 3.5,
+    horizon: 10, homePrice: 675000, downPct: 15, mortgageRate: 6.50, rent: 3000,
+    appreciation: 3.50, opportunity: 7.00, inflation: 3.0,
     loanTerm: 30, loanPoints: 0.00, pmiRate: 0.35, refiToggle: false, refiRate: 5.25, refiYear: 3, refiTermMode: 30, refiCostPct: 1.00,
     propTax: 1.10, propTaxCapToggle: true, homeIns: 0.35, maintenance: 1.10, hoa: 0,
     renoCost: 15000, buyClosure: 2.75, sellClosure: 6.50, moving: 3000,
-    rentIncrease: 2.50, renterMoveFreq: 0,
+    rentIncrease: 3.00, renterMoveFreq: 0,
     rentalToggle: true, rentalIncome: 1750, rentalPct: 30, vacancy: 5, propMgmt: 0,
     taxToggle: true, mfj: false, income: 150000, incomeGrowthToggle: true
   }
